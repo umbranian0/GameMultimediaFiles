@@ -30,13 +30,14 @@
 
     //variavel para guardar onde esta a personagem
     var playerColumn;
-    var playerRow;
-    
+    var playerRow; 
     var keyCol;
     var keyRow;
-
     var doorCol;
     var doorRow;
+    //info panel vars
+    var keys;
+    var gameMessage = "Unlock the door";
     //tamanho de cada celula
     const SIZE = 32;
     var COLUMNS;
@@ -71,10 +72,10 @@
         //contrução de um array para o mapa, de modo a inserir bonecos 
       //  daw map array
       constructArray();
-      //contruct array of obstacles
-      
+      //initialize game variables
+      findGameObjects();
       //initialize map
-      
+      render();
     }
     //function that stores the map 
     //then assign it to global vars
@@ -99,7 +100,40 @@
       }
     }
     function render(){
+      //removing stage objects / Reset
+      while(stage.hasChildNodes())stage.removeChild(stage.firstChild);
+    
+      for (let row = 0 ; row < ROWS ; row++)
+        for( let col = 0 ; col < COLUMNS ; col ++){
+          //var for the cell
+          let cell = document.createElement("img");
+          cell.setAttribute("class","cell");
 
+          stage.appendChild(cell);
+
+          switch(mapArray[row][col]){
+            case character.floor : cell.className = '.floor' ; break;
+            case character.WALL : cell.className = '.wall' ; break;
+            case character.FLOOR : cell.className= '.floor' ; break;
+            case character.ICESTONE : cell.className= '.iceStone'; break;
+            case character.STAIRE : cell.className='.stairsE'; break;
+            case character.STAIRS : cell.className = '.stairsS'; break;
+            case character.STONELOCK : cell.className = '.stoneLock'
+          }
+          switch(gameOBjects[row][col]){
+            case character.QUESTION : cell.className = '.question'; break;
+            case character.KEY : cell.className= '.key'; break;
+            case character.HERO : cell.className = '.hero'; break;
+            case character.ENEMY : cell.className = '.enemy' ; break;
+            //case character.BONES : cell.className = '.bones' ; break;
+            case character.DOORLOCK : cell.className = '.doorLock' ; break;
+          }
+         cell.style.top = row * SIZE + "px";
+         cell.style.left = row *SIZE +"px"; 
+        }
+
+        output.innerHTML = gameMessage;
+        gameMessage = "Kyes : " + keys;
     }
     //controi o array da stage
     function constructArray(){
