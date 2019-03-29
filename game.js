@@ -28,6 +28,8 @@
   var gameOBjects;
   var mapArray;
 
+  //hero matrix stores values around the hero 3x3 array
+  var heroMatrix;
   //variavel para guardar onde esta a personagem
   var playerColumn;
   var playerRow;
@@ -71,11 +73,13 @@
     console.log("Stage width and heigth " + stageWidth + "  ," + stageHeigth);
     //contrução de um array para o mapa, de modo a inserir bonecos 
     //  daw map array
-    constructArray();
     //initialize game variables
-    findGameObjects();
+    constructArray();
+ 
     //initialize map
     render();
+    updateHeroMatrix();
+    window.addEventListener("keydown", keydownHandler);
   }
   //function that stores the map 
   //then assign it to global vars
@@ -85,6 +89,7 @@
         //store Hero Position
         if (mapArray[row][col] === character.HERO) {
           playerColumn = col;
+          console.log(`playercol ${playerColumn}`);  
           playerRow = row;
         }
         if (mapArray[row][col] === character.KEY) {
@@ -98,6 +103,7 @@
         //...
       }
     }
+    
   }
   function render() {
     //removing stage objects / Reset
@@ -135,7 +141,7 @@
     }
 
     output.innerHTML = gameMessage;
-    gameMessage = "Kyes : " + keys;
+    gameMessage = "Keys : " + keys;
   }
   //controi o array da stage
   function constructArray() {
@@ -148,6 +154,8 @@
     console.log("array criado:");
     console.log(gameOBjects);
     constructObstacleArray();
+    console.log(mapArray.length);
+    console.log(mapArray[0].length);
   }
 
   function constructObstacleArray() {
@@ -156,28 +164,87 @@
     for (let i = 0; i < mapArray[0].length; i++) {
       for (let j = 0; j < mapArray.length; j++) {
         //hero on position [0][0]
-        if (i === 0 && j === 0) {
+        if (i === 1 && j === 1) {
           mapArray[i][j] = 10;
         }
         //contruct position of obstacles
-        if (i <= 6 && j === 5) {
+        if (i === 0 || i === mapArray[0].length - 2 || j === 0 || j === mapArray.length - 1) {
           mapArray[i][j] = 1;
         }
 
-        if (i <= 10 && j === 3) {
+        if (i === 2 && j === 3) {
           mapArray[i][j] = 3;
         }
 
-        if (i === mapArray[0].length - 1 && j === mapArray.length - 1) {
+        if (i === mapArray[0].length - 3 && j === mapArray.length - 2) {
           mapArray[i][j] = 7;
         }
 
 
       }
     }
-
+    findGameObjects();
     console.log("map array");
     console.log(mapArray);
   }
+  //function that update the hero localization
+	function updateHeroMatrix(){
+	//	heroMatrix = new Array(new Array(3));
+		for(let i = 0 ; i < 3 ; i ++){
+		  for(let j = 0 ; j < 3 ; j++){
+    //  heroMatrix[i][j] = mapArray[playerRow - (i+1)][playerColumn - (i+1)];
+      heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(mapArray[i+ playerRow ][i+playerColumn])));
+      heroMatrix[i][j] = mapArray[i+ playerRow -1][i+playerColumn- 1];
+		  }
+		}
+	  console.log(heroMatrix);
+  }
+    
+  function keydownHandler(event) {
+    switch (event.keyCode) {
+      case teclado.UP: if (playerRow > 0) {
+        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        playerRow--;
+        gameOBjects[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.DOWN: if (playerRow < ROWS - 1) {
+        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        playerRow++;
+        gameOBjects[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.LEFT: if (playerColumn > 0) {
+        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        playerColumn--;
+        gameOBjects[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.RIGHT: if (playerColumn < COLUMNS - 1) {
+        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        playerColumn++;
+        gameOBjects[playerRow][playerColumn] = character.HERO;
+      } break;
 
+    }
+    switch (mapArray[playerRow][playerColumn]) {
+			case character.ENEMY: fight();
+				break;
+			case character.KEY: trade();
+				break;
+			case character.DOORLOCK: endGame();
+				break;
+
+		}
+    render();
+  }
+
+	function endGame() {
+		/*completar*/
+		// 1 - verificar se se atingiu o objectivo (castelo)
+		// 1.1 - se sim, calcular a pontua��o: comida +ouro + experiencia
+		// 1.2 - se n�o, ent�o verificar se foi encontrou o monstro: enviar uma mensagem, e reproduzir o som do monstro e do 
+		//         afundamento do navio
+		// 1.3 - Se n�o, enviar mensagem com a causa da morte
+
+		//Remove the keyboard listener to end the game
+		window.removeEventListener("keydown", keydownHandler, false);
+	}
 })();
