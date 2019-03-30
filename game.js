@@ -78,7 +78,7 @@
  
     //initialize map
     render();
-    updateHeroMatrix();
+   
     window.addEventListener("keydown", keydownHandler);
   }
   //function that stores the map 
@@ -135,11 +135,12 @@
           case character.DOORLOCK: cell.className += ' doorLock'; break;
         }
 
-        cell.style.top = col * SIZE + "px";
-        cell.style.left = row * SIZE + "px";
+        cell.style.top = row * SIZE + "px";
+        cell.style.left = col * SIZE + "px";
       }
+      
     }
-
+    updateHeroMatrix();
     output.innerHTML = gameMessage;
     gameMessage = "Keys : " + keys;
   }
@@ -189,12 +190,20 @@
   }
   //function that update the hero localization
 	function updateHeroMatrix(){
-	//	heroMatrix = new Array(new Array(3));
+    heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(0)));
+
 		for(let i = 0 ; i < 3 ; i ++){
 		  for(let j = 0 ; j < 3 ; j++){
-    //  heroMatrix[i][j] = mapArray[playerRow - (i+1)][playerColumn - (i+1)];
-      heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(mapArray[i+ playerRow ][i+playerColumn])));
-      heroMatrix[i][j] = mapArray[i+ playerRow -1][i+playerColumn- 1];
+    
+      if(i === 0){
+        heroMatrix[i][j] = mapArray[playerRow - 1][playerColumn + j];
+      }
+      if(i === 1){
+        heroMatrix[i][j] = mapArray[playerRow][playerColumn - 1 + j];
+      }
+      if(i === 2 ){
+        heroMatrix[i][j] = mapArray[playerRow + 1][playerColumn - 1 + j]; 
+      }
 		  }
 		}
 	  console.log(heroMatrix);
@@ -203,24 +212,24 @@
   function keydownHandler(event) {
     switch (event.keyCode) {
       case teclado.UP: if (playerRow > 0) {
-        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
-        gameOBjects[playerRow][playerColumn] = character.HERO;
+        mapArray[playerRow][playerColumn] = character.HERO;
       } break;
       case teclado.DOWN: if (playerRow < ROWS - 1) {
-        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow++;
-        gameOBjects[playerRow][playerColumn] = character.HERO;
+        mapArray[playerRow][playerColumn] = character.HERO;
       } break;
       case teclado.LEFT: if (playerColumn > 0) {
-        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
-        gameOBjects[playerRow][playerColumn] = character.HERO;
+        mapArray[playerRow][playerColumn] = character.HERO;
       } break;
       case teclado.RIGHT: if (playerColumn < COLUMNS - 1) {
-        gameOBjects[playerRow][playerColumn] = character.FLOOR;
+        mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
-        gameOBjects[playerRow][playerColumn] = character.HERO;
+        mapArray[playerRow][playerColumn] = character.HERO;
       } break;
 
     }
