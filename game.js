@@ -110,6 +110,7 @@
     while (stage.hasChildNodes()) {
       stage.removeChild(stage.firstChild);
     }
+    updateHeroMatrix();
 
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLUMNS; col++) {
@@ -135,12 +136,12 @@
           case character.DOORLOCK: cell.className += ' doorLock'; break;
         }
 
-        cell.style.top = row * SIZE + "px";
-        cell.style.left = col * SIZE + "px";
+        cell.style.top = col * SIZE + "px";
+        cell.style.left = row * SIZE + "px";
       }
       
     }
-    updateHeroMatrix();
+
     output.innerHTML = gameMessage;
     gameMessage = "Keys : " + keys;
   }
@@ -165,7 +166,7 @@
     for (let i = 0; i < mapArray[0].length; i++) {
       for (let j = 0; j < mapArray.length; j++) {
         //hero on position [0][0]
-        if (i === 1 && j === 1) {
+        if (i === 2 && j === 1) {
           mapArray[i][j] = 10;
         }
         //contruct position of obstacles
@@ -196,13 +197,13 @@
 		  for(let j = 0 ; j < 3 ; j++){
     
       if(i === 0){
-        heroMatrix[i][j] = mapArray[playerRow - 1][playerColumn + j];
+        heroMatrix[i][j] = mapArray[playerRow - 1][(playerColumn- 1) + j];
       }
       if(i === 1){
-        heroMatrix[i][j] = mapArray[playerRow][playerColumn - 1 + j];
+        heroMatrix[i][j] = mapArray[playerRow][(playerColumn - 1) + j];
       }
       if(i === 2 ){
-        heroMatrix[i][j] = mapArray[playerRow + 1][playerColumn - 1 + j]; 
+        heroMatrix[i][j] = mapArray[playerRow + 1][(playerColumn - 1) + j]; 
       }
 		  }
 		}
@@ -211,24 +212,24 @@
     
   function keydownHandler(event) {
     switch (event.keyCode) {
-      case teclado.UP: if (playerRow > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
-        playerRow--;
-        mapArray[playerRow][playerColumn] = character.HERO;
-      } break;
-      case teclado.DOWN: if (playerRow < ROWS - 1) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
-        playerRow++;
-        mapArray[playerRow][playerColumn] = character.HERO;
-      } break;
-      case teclado.LEFT: if (playerColumn > 0) {
+      case teclado.UP: if (heroMatrix[1][0] === character.FLOOR ) {//validações criadas
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
         mapArray[playerRow][playerColumn] = character.HERO;
       } break;
-      case teclado.RIGHT: if (playerColumn < COLUMNS - 1) {
+      case teclado.DOWN: if (heroMatrix[1][2] === character.FLOOR  ) {
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.LEFT: if (heroMatrix[0][1] === character.FLOOR  ) {
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow--;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.RIGHT: if (heroMatrix[2][1] === character.FLOOR  ) {
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow++;
         mapArray[playerRow][playerColumn] = character.HERO;
       } break;
 
