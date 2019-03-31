@@ -25,7 +25,6 @@
     ENEMY: 11
   }
 
-  var gameOBjects;
   var mapArray;
 
   //hero matrix stores values around the hero 3x3 array
@@ -74,7 +73,7 @@
     //contrução de um array para o mapa, de modo a inserir bonecos 
     //  daw map array
     //initialize game variables
-    constructArray();
+    constructObstacleArray();
  
     //initialize map
     render();
@@ -145,22 +144,11 @@
     output.innerHTML = gameMessage;
     gameMessage = "Keys : " + keys;
   }
-  //controi o array da stage
-  function constructArray() {
-    //calc nr de col e rows
-    COLUMNS = Math.floor(stageHeigth / SIZE);
-    ROWS = Math.floor(stageWidth / SIZE);
-    //init array
-    gameOBjects = new Array(COLUMNS).fill(0).map(item => (new Array(ROWS).fill(0)));
 
-    console.log("array criado:");
-    console.log(gameOBjects);
-    constructObstacleArray();
-    console.log(mapArray.length);
-    console.log(mapArray[0].length);
-  }
 
   function constructObstacleArray() {
+    COLUMNS = Math.floor(stageHeigth / SIZE);
+    ROWS = Math.floor(stageWidth / SIZE);
     console.log("contructObstacleArray;");
     mapArray = new Array(COLUMNS).fill(0).map(item => (new Array(ROWS).fill(0)));
     for (let i = 0; i < mapArray[0].length; i++) {
