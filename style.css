@@ -168,36 +168,7 @@ exemplo: para desfocar qualquer elemento basta addicionar a class blurred; os co
 
 /* */
 
-@media only screen and (min-width: 1920px) {
-    #stage {
-        position: relative;
-        width: 800px;
-        height: 640px;
-        display: block;
-        margin: auto;
-        -webkit-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        -moz-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        border: thin whitesmoke solid;
-        /* comentar quando as imagens forem colocadas*/
-        background-color: #555;
-    }
-    #infoPanel {
-        position: relative;
-        width: 790px;
-        height: 50px;
-        display: block;
-        margin: auto;
-        background-color: darkgrey;
-        -webkit-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        -moz-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        border: 5px gold solid;
-        border-radius: 5px;
-    }
-}
-
-@media only screen and (max-width: 1919px) {
+@media only screen  {
     #stage {
         position: relative;
         width: 608px;

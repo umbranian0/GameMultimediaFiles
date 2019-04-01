@@ -135,8 +135,8 @@
           case character.DOORLOCK: cell.className += ' doorLock'; break;
         }
 
-        cell.style.top = col * SIZE + "px";
-        cell.style.left = row * SIZE + "px";
+        cell.style.top = row * SIZE + "px";
+        cell.style.left = col * SIZE + "px";
       }
       
     }
@@ -147,28 +147,45 @@
 
 
   function constructObstacleArray() {
-    COLUMNS = Math.floor(stageHeigth / SIZE);
-    ROWS = Math.floor(stageWidth / SIZE);
+    COLUMNS = Math.floor(stageWidth / SIZE);
+    ROWS = Math.floor(stageHeigth / SIZE);
     console.log("contructObstacleArray;");
-    mapArray = new Array(COLUMNS).fill(0).map(item => (new Array(ROWS).fill(0)));
-    for (let i = 0; i < mapArray[0].length; i++) {
-      for (let j = 0; j < mapArray.length; j++) {
+    mapArray = new Array(ROWS).fill(0).map(item => (new Array(COLUMNS).fill(0)));
+    
+    for (let rowNumb = 0; rowNumb < ROWS; rowNumb++) {// i >>
+      for (let colNumb = 0; colNumb < COLUMNS; colNumb++) { //ha qualquer erro as rows estao a ser definidas pelo J e nao I
         //hero on position [0][0]
-        if (i === 2 && j === 1) {
-          mapArray[i][j] = 10;
+        if (rowNumb === 2 && colNumb === 1) {
+          mapArray[rowNumb][colNumb] = 10;
         }
-        //contruct position of obstacles
-        if (i === 0 || i === mapArray[0].length - 2 || j === 0 || j === mapArray.length - 1) {
-          mapArray[i][j] = 1;
+        //contruct position of walls
+        if (rowNumb === 0 || rowNumb === mapArray[0].length || colNumb === 0 || colNumb === COLUMNS -1) {
+          mapArray[rowNumb][colNumb] = 1;
+        }
+        if(rowNumb === 4 && colNumb < 10 
+          || rowNumb > 4 && rowNumb < 7 && colNumb === 5 && colNumb < 10
+          || rowNumb === 5 && colNumb > 10 
+          || rowNumb > 5 && colNumb == 9
+          || rowNumb === 14 && colNumb < 5
+          || rowNumb > 15 && colNumb == 5
+          || rowNumb === 6 && colNumb < 9 && colNumb > 6 
+          || colNumb ===  11 && rowNumb > 5 && rowNumb < ROWS -2){
+          mapArray[rowNumb][colNumb] = 1;
+        }
+        //setting stairs
+        if (rowNumb === 3 && colNumb === 1 || rowNumb === 16 && colNumb ===16) {
+          mapArray[rowNumb][colNumb] = 3;
         }
 
-        if (i === 2 && j === 3) {
-          mapArray[i][j] = 3;
+        if (rowNumb === mapArray[0].length - 3 && colNumb === COLUMNS - 2) {
+          mapArray[rowNumb][colNumb] = 7;
         }
 
-        if (i === mapArray[0].length - 3 && j === mapArray.length - 2) {
-          mapArray[i][j] = 7;
+        //setting keys
+        if(rowNumb === 15 && colNumb === 1 || rowNumb === 3 && colNumb === 9 ){
+          mapArray[rowNumb][colNumb] = 5;
         }
+        //setting stairs
 
 
       }
@@ -200,24 +217,24 @@
     
   function keydownHandler(event) {
     switch (event.keyCode) {
-      case teclado.UP: if (heroMatrix[1][0] === character.FLOOR ) {//validações criadas
-        mapArray[playerRow][playerColumn] = character.FLOOR;
-        playerColumn--;
-        mapArray[playerRow][playerColumn] = character.HERO;
-      } break;
-      case teclado.DOWN: if (heroMatrix[1][2] === character.FLOOR  ) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
-        playerColumn++;
-        mapArray[playerRow][playerColumn] = character.HERO;
-      } break;
-      case teclado.LEFT: if (heroMatrix[0][1] === character.FLOOR  ) {
+      case teclado.UP: if (heroMatrix[0][1] === character.FLOOR ) {//validações criadas
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
         mapArray[playerRow][playerColumn] = character.HERO;
       } break;
-      case teclado.RIGHT: if (heroMatrix[2][1] === character.FLOOR  ) {
+      case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR  ) {
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow++;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR  ) {
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerColumn--;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      } break;
+      case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR  ) {
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerColumn++;
         mapArray[playerRow][playerColumn] = character.HERO;
       } break;
 
