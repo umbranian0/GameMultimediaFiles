@@ -26,7 +26,7 @@
   }
 
   var mapArray;
-
+  var itemsArray;
   //hero matrix stores values around the hero 3x3 array
   var heroMatrix;
   var firstTime;
@@ -88,16 +88,16 @@
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLUMNS; col++) {
         //store Hero Position
-        if (mapArray[row][col] === character.HERO) {
+        if (itemsArray[row][col] === character.HERO) {
           playerColumn = col;
           console.log(`playercol ${playerColumn}`);
           playerRow = row;
         }
-        if (mapArray[row][col] === character.KEY) {
+        if (itemsArray[row][col] === character.KEY) {
           keyCol = col;
           keyRow = row;
         }
-        if (mapArray[row][col] === character.DOORLOCK) {
+        if (itemsArray[row][col] === character.DOORLOCK) {
           doorCol = col;
           doorRow = row;
         }
@@ -119,12 +119,15 @@
         cell.setAttribute("class", "cell");
         stage.appendChild(cell);
 
-        switch (mapArray[row][col]) {
+        switch (itemsArray[row][col]){
           case character.HERO: cell.className += ' actor'; break;
           case character.QUESTION: cell.className += ' question'; break;
           case character.KEY: cell.className += ' key'; break;
           case character.ENEMY: cell.className += ' enemy'; break;
-
+        }
+ 
+      //  if(!firstTime)
+        switch (mapArray[row][col]) {
           case character.floor: cell.className += ' floor'; break;
           case character.WALL: cell.className += ' wall'; break;
           case character.STAIRE: cell.className += ' stairsE'; break;
@@ -133,13 +136,15 @@
           case character.DOORLOCK: cell.className += ' doorLock'; break;
           case character.STONELOCK: cell.className += ' stoneLock'; break;
           case character.ICESTONE: cell.className += ' iceStone'; break;
-
         }
+        
         cell.style.top = row * SIZE + "px";
         cell.style.left = col * SIZE + "px";
       }
-
+    
     }
+    if(!firstTime)
+    firstTime = true;
     updateHeroMatrix();
 
     output.innerHTML = gameMessage;
@@ -152,12 +157,14 @@
     COLUMNS = Math.floor(stageWidth / SIZE);
     ROWS = Math.floor(stageHeigth / SIZE);
     mapArray = new Array(ROWS).fill(0).map(item => (new Array(COLUMNS).fill(0)));
+    //initialize items array
+    itemsArray = new Array(ROWS).fill(0).map(item => (new Array(COLUMNS).fill(0)));
 
     for (let rowNumb = 0; rowNumb < ROWS; rowNumb++) {// i >>
       for (let colNumb = 0; colNumb < COLUMNS; colNumb++) { //ha qualquer erro as rows estao a ser definidas pelo J e nao I
         //hero on position [0][0]
         if (rowNumb === 2 && colNumb === 1) {
-          mapArray[rowNumb][colNumb] = 10;
+          itemsArray[rowNumb][colNumb] = 10;
         }
         //contruct position of walls
         if (rowNumb === 0 || rowNumb === mapArray[0].length || colNumb === 0 || colNumb === COLUMNS - 1) {
@@ -188,17 +195,21 @@
 
         //setting keys
         if (rowNumb === 15 && colNumb === 1 || rowNumb === 3 && colNumb === 9) {
-          mapArray[rowNumb][colNumb] = 5;
+          itemsArray[rowNumb][colNumb] = 5;
         }
         //setting stairs
-
+        if(rowNumb === 16 && colNumb === 3){
+          itemsArray[rowNumb][colNumb] = 11;
+        }
 
       }
 
     }
+
     findGameObjects();
     console.log("map array");
     console.log(mapArray);
+    console.log(itemsArray);
   }
   //function that update the hero localization
   function updateHeroMatrix() {
@@ -224,37 +235,45 @@
   function keydownHandler(event) {
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR) {//validações criadas
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        itemsArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        itemsArray[playerRow][playerColumn] = character.HERO;
+        render();
       } break;
       case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        itemsArray[playerRow][playerColumn] = character.FLOOR;
         playerRow++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        itemsArray[playerRow][playerColumn] = character.HERO;
+        render();
       } break;
       case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        itemsArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        itemsArray[playerRow][playerColumn] = character.HERO;
+        render();
       } break;
       case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        itemsArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        itemsArray[playerRow][playerColumn] = character.HERO;
+        render();
       } break;
-
+      
     }
+
     switch (mapArray[playerRow][playerColumn]) {
       case character.ENEMY: fight();
+      render();
         break;
+        
       case character.KEY: trade();
+      render();
         break;
       case character.DOORLOCK: endGame();
+      render();
         break;
 
     }
-    render();
   }
 
   function endGame() {
