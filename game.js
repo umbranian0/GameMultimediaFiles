@@ -33,12 +33,9 @@
   //variavel para guardar onde esta a personagem
   var playerColumn;
   var playerRow;
-  var keyCol;
-  var keyRow;
-  var doorCol;
-  var doorRow;
+
   //info panel vars
-  var keys;
+  var keys = 0;
   var gameMessage = "Unlock the door";
   //tamanho de cada celula
   const SIZE = 32;
@@ -136,6 +133,7 @@
           case character.DOORLOCK: cell.className += ' doorLock'; break;
           case character.STONELOCK: cell.className += ' stoneLock'; break;
           case character.ICESTONE: cell.className += ' iceStone'; break;
+          case character.BONES: cell.className += ' bones'; break;
         }
         
         cell.style.top = row * SIZE + "px";
@@ -236,24 +234,43 @@
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR) {//validações criadas
         itemsArray[playerRow][playerColumn] = character.FLOOR;
+
+        if(heroMatrix[0][1] === character.KEY || heroMatrix[0][1] === character.BONES)
+        heroMatrix[0][1] === character.KEY ? keys+1 : bones++;
+
         playerRow--;
         itemsArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR) {
+
+      case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR ) {
         itemsArray[playerRow][playerColumn] = character.FLOOR;
+
+        if(heroMatrix[2][1] === character.KEY|| heroMatrix[2][1] === character.BONES)
+        heroMatrix[2][1] === character.KEY ? keys+1 : bones++;
+
         playerRow++;
         itemsArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR) {
+
+      case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR ) {
         itemsArray[playerRow][playerColumn] = character.FLOOR;
+
+        if(heroMatrix[1][0] === character.KEY|| heroMatrix[1][0] === character.BONES)
+        heroMatrix[1][0] === character.KEY ? keys+1 : bones++;
+
         playerColumn--;
         itemsArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR) {
+
+      case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR ) {
         itemsArray[playerRow][playerColumn] = character.FLOOR;
+
+        if(heroMatrix[1][2] === character.KEY|| heroMatrix[0][1] === character.BONES)
+        heroMatrix[1][2] === character.KEY ? keys+1 : bones++;
+
         playerColumn++;
         itemsArray[playerRow][playerColumn] = character.HERO;
         render();
