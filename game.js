@@ -41,6 +41,7 @@
   var stoneLockRow;
   //info panel vars
   var keys = 0;
+  var bones = 0;
   var gameMessage = "Unlock the door";
   //tamanho de cada celula
   const SIZE = 32;
@@ -371,45 +372,57 @@
     console.log(heroMatrix);
   }
 
-  function keydownHandler(event) {
+   function keydownHandler(event) {
     switch (event.keyCode) {
-      case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY) {//validações criadas
-        if(heroMatrix[0][1] === character.KEY){
-          trade();
+      case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY || heroMatrix[0][1] === character.BONES) {//validações criadas
+        if (heroMatrix[0][1] === character.KEY) {
+          trade("keys");
+        }
+        if (heroMatrix[0][1] === character.BONES) {
+          trade("bones");
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
         mapArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR || heroMatrix[2][1] === character.KEY) {
-        if(heroMatrix[2][1] === character.KEY){
-          trade();
+      case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR || heroMatrix[2][1] === character.KEY || heroMatrix[2][1] === character.BONES) {
+        if (heroMatrix[2][1] === character.KEY) {
+          trade("keys");
+        }
+        if (heroMatrix[2][1] === character.BONES) {
+          trade("bones");
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow++;
         mapArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR || heroMatrix[1][0] === character.KEY) {
-        if(heroMatrix[1][0] === character.KEY){
-          trade();
+      case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR || heroMatrix[1][0] === character.KEY || heroMatrix[1][0] === character.BONES) {
+        if (heroMatrix[1][0] === character.KEY) {
+          trade("keys");
+        }
+        if (heroMatrix[1][0] === character.BONES) {
+          trade("bones");
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
         mapArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR || heroMatrix[1][2] === character.KEY) {
-        if(heroMatrix[1][2] === character.KEY){
-          trade();
+      case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR || heroMatrix[1][2] === character.KEY || heroMatrix[1][2] === character.BONES) {
+        if (heroMatrix[1][2] === character.KEY) {
+          trade("keys");
+        }
+        if (heroMatrix[1][2] === character.BONES) {
+          trade("bones");
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
         mapArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-       case teclado.SPACE: {
+      case teclado.SPACE: {
         if (heroMatrix[0][1] === character.ICESTONE) {
           mapArray[playerRow][playerColumn] = character.FLOOR;
           playerRow--;
@@ -420,25 +433,92 @@
           mapArray[playerRow][playerColumn] = character.FLOOR;
           playerRow++;
           mapArray[playerRow][playerColumn] = character.HERO;
-          
+
         }
         else if (heroMatrix[1][0] === character.ICESTONE) {
           mapArray[playerRow][playerColumn] = character.FLOOR;
           playerColumn--;
           mapArray[playerRow][playerColumn] = character.HERO;
-          
+
         }
         else if (heroMatrix[1][2] === character.ICESTONE) {
           mapArray[playerRow][playerColumn] = character.FLOOR;
           playerColumn++;
           mapArray[playerRow][playerColumn] = character.HERO;
-          
+
+        }
+        else if (heroMatrix[0][1] === character.STONELOCK) {
+          if (bones > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerRow--;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            bones = bones - 1;
+          }
+        }
+
+        else if (heroMatrix[2][1] === character.STONELOCK) {
+          if (bones > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerRow++;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            bones = bones - 1;
+          }
+        }
+        else if (heroMatrix[1][0] === character.STONELOCK) {
+          if (bones > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerColumn--;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            bones = bones - 1;
+          }
+        }
+        else if (heroMatrix[2][1] === character.STONELOCK) {
+          if (bones > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerColumn++;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            bones = bones - 1;
+          }
+        }
+        else if (heroMatrix[0][1] === character.DOORLOCK) {
+          if (keys > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerRow--;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            keys = keys - 1;
+          }
+        }
+
+        else if (heroMatrix[2][1] === character.DOORLOCK) {
+          if (keys > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerRow++;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            keys = keys - 1;
+          }
+        }
+        else if (heroMatrix[1][0] === character.DOORLOCK) {
+          if (keys > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerColumn--;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            keys = keys - 1;
+          }
+        }
+        else if (heroMatrix[2][1] === character.DOORLOCK) {
+          if (keys > 0) {
+            mapArray[playerRow][playerColumn] = character.FLOOR;
+            playerColumn++;
+            mapArray[playerRow][playerColumn] = character.HERO;
+            keys = keys - 1;
+          }
         }
         render();
-    } break;
+      } break;
 
-    }    
+    }
   }
+
 
   //not working
   /*to do*/
@@ -469,8 +549,13 @@
     window.removeEventListener("keydown", keydownHandler, false);
   }
 
-  function trade(){
-    keys++;
+   function trade(character) {
+    if (character === "keys") {
+      keys++;
+    }
+    if (character === "bones") {
+      bones++;
+    }
     console.log(keys);
   }
 })();
