@@ -29,11 +29,16 @@
 
   //hero matrix stores values around the hero 3x3 array
   var heroMatrix;
-  var firstTime;
+  var enemyMatrix;
   //variavel para guardar onde esta a personagem
   var playerColumn;
   var playerRow;
-
+  var enemyCol;
+  var enemyRow;
+  var enemy2Col;
+  var enemy2Row;
+  var stoneLockCol;
+  var stoneLockRow;
   //info panel vars
   var keys = 0;
   var gameMessage = "Unlock the door";
@@ -68,7 +73,7 @@
     stageWidth = document.getElementById('stage').clientWidth;
     stageHeigth = document.getElementById('stage').clientHeight;
     console.log("Stage width and heigth " + stageWidth + "  ," + stageHeigth);
-    firstTime = false;
+
     //contrução de um array para o mapa, de modo a inserir bonecos 
     //  daw map array
     //initialize game variables
@@ -90,13 +95,20 @@
           console.log(`playercol ${playerColumn}`);
           playerRow = row;
         }
-        if (mapArray[row][col] === character.KEY) {
-          keyCol = col;
-          keyRow = row;
+        if (mapArray[row][col] === character.ENEMY) {
+          if(enemyCol === null){
+            enemyCol = col;
+            enemyRow = row;
+          }
+          else if(enemy2Col === null){
+            enemy2Col = col;
+            enemy2Row = row;
+          }
+          
         }
-        if (mapArray[row][col] === character.DOORLOCK) {
-          doorCol = col;
-          doorRow = row;
+        if (mapArray[row][col] === character.STONELOCK) {
+          stoneLockCol = col;
+          stoneLockRow = row;
         }
         //...
       }
@@ -117,26 +129,32 @@
         stage.appendChild(cell);
 
         switch (mapArray[row][col]) {
-          case character.HERO: cell.className += ' actor'; break;
-          case character.QUESTION: cell.className += ' question'; break;
-          case character.KEY: cell.className += ' key'; break;
-          case character.ENEMY: cell.className += ' enemy'; break;
-          case character.floor: cell.className += ' floor'; break;
-          case character.WALL: cell.className += ' wall'; break;
-          case character.STAIRE: cell.className += ' stairsE'; break;
-          case character.STAIRE: cell.className += ' stairsE'; break;
-          case character.STAIRS: cell.className += ' stairsS'; break;
-          case character.DOORLOCK: cell.className += ' doorLock'; break;
-          case character.STONELOCK: cell.className += ' stoneLock'; break;
-          case character.ICESTONE: cell.className += ' iceStone'; break;
-
+          case character.HERO: cell.classList.add('actor'); break;
+          case character.QUESTION: cell.classList.add('question'); break;
+          case character.KEY: cell.classList.add('key'); break;
+          case character.ENEMY: cell.classList.add('enemy'); break;
+          case character.floor: cell.classList.add('floor'); break;
+          case character.WALL: cell.classList.add('wall'); break;
+          case character.STAIRE: cell.classList.add('stairsE'); break;
+          case character.STAIRE: cell.classList.add('stairsE'); break;
+          case character.STAIRS: cell.classList.add('stairsS'); break;
+          case character.DOORLOCK: cell.classList.add('doorLock'); break;
+          case character.STONELOCK: cell.classList.add('stoneLock'); break;
+          case character.ICESTONE: cell.classList.add('iceStone'); break;
+          case character.BONES: cell.classList.add('bones'); break;
         }
         cell.style.top = row * SIZE + "px";
         cell.style.left = col * SIZE + "px";
       }
 
     }
-    updateHeroMatrix();
+    
+    playerColumn != null ? updateHeroMatrix(): null;
+
+    if(enemyRow != null && enemy2Row != null){
+      updateEnemyMatrix();
+      autoMoveEnemy();
+    }
 
     output.innerHTML = gameMessage;
     gameMessage = "Keys : " + keys;
@@ -152,7 +170,7 @@
     for (let rowNumb = 0; rowNumb < ROWS; rowNumb++) {// i >>
       for (let colNumb = 0; colNumb < COLUMNS; colNumb++) { //ha qualquer erro as rows estao a ser definidas pelo J e nao I
         //hero on position [0][0]
-        if (rowNumb === 2 && colNumb === 1) {
+        if (rowNumb === 2 && colNumb === 2) {
           mapArray[rowNumb][colNumb] = 10;
         }
         //contruct position of walls
@@ -169,25 +187,69 @@
           || colNumb === 11 && rowNumb > 5 && rowNumb < ROWS - 2
           || rowNumb > 7 && rowNumb < 15 && colNumb === 5
           || colNumb === 16  && rowNumb > 5 && rowNumb < 17
-          || colNumb === 14  && rowNumb > 6 && rowNumb < 19 ) {
+          || colNumb === 14  && rowNumb > 6 && rowNumb < 19 
+          || rowNumb === 13 && colNumb === 3
+          || rowNumb === 12 && colNumb === 3 
+          || rowNumb === 2 && colNumb < 18 && colNumb > 12
+          || rowNumb === 3 && colNumb === 13
+          || rowNumb === 3 && colNumb === 16
+          || rowNumb === 9 && colNumb < 3 && colNumb > 0
+          || rowNumb === 8 && colNumb === 4
+          || rowNumb === 11 && colNumb === 3
+          || rowNumb === 14 && colNumb === 6
+          || rowNumb === 14 && colNumb === 8
+          || rowNumb === 1 && colNumb === 4
+          || rowNumb === 2 && colNumb > 3 && colNumb < 10) {
           mapArray[rowNumb][colNumb] = 1;
         }
-        //setting stairs
-        if (rowNumb === 5 && colNumb === 6
-          || rowNumb === 6 && colNumb === 17) {
-          mapArray[rowNumb][colNumb] = 3;
+        //setting stairsE
+        if (rowNumb === 17 && colNumb === 6
+          || rowNumb === 12 && colNumb === 13) {
+          mapArray[rowNumb][colNumb] = 2;
         }
         //doorlock
-        if (rowNumb === 7 && colNumb === 17) {
+        if (rowNumb === 7 && colNumb === 17
+          || rowNumb === 14 && colNumb === 7) {
           mapArray[rowNumb][colNumb] = 7;
         }
 
         //setting keys
-        if (rowNumb === 15 && colNumb === 1 || rowNumb === 3 && colNumb === 9) {
+        if (rowNumb === 15 && colNumb === 1 || rowNumb === 13 && colNumb === 1) {
           mapArray[rowNumb][colNumb] = 5;
         }
-        //setting stairs
 
+        //setting Interrogations
+        if (rowNumb === 13 && colNumb === 4 
+          || rowNumb === 3 && colNumb === 17) {
+          mapArray[rowNumb][colNumb] = 8;
+        }
+
+        //setting Ice
+        if (rowNumb === 11 && colNumb === 4
+          || rowNumb === 4 && colNumb === 16) {
+          mapArray[rowNumb][colNumb] = 4;
+        }
+
+        //Setting Enemys
+        if (rowNumb === 13 && colNumb === 10
+          ||rowNumb === 6 && colNumb === 2){
+          mapArray[rowNumb][colNumb] = 11;
+        }
+
+        //Setting Bones
+        if (rowNumb === 1 && colNumb === 17){
+          mapArray[rowNumb][colNumb] = 9;
+        }
+
+        //Setting StoneLock
+        if (rowNumb === 7 && colNumb === 5){
+          mapArray[rowNumb][colNumb] = 6;
+        }
+
+        //setting stairsS
+        if (rowNumb === 6 && colNumb === 17){
+          mapArray[rowNumb][colNumb] = 3;
+        }
 
       }
 
@@ -195,6 +257,62 @@
     findGameObjects();
     console.log("map array");
     console.log(mapArray);
+  }
+  function updateEnemyMatrix() {
+    enemyMatrix = new Array(3).fill().map(item => (new Array(3).fill.map(item => (new Array(3).fill(0)))));
+
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+
+        if (i === 0) {
+          enemyMatrix[0][i][j] = mapArray[enemyRow - 1][(enemyCol - 1) + j];
+          enemyMatrix[1][i][j] = mapArray[enemy2Row - 1][(enemy2Col - 1) + j];
+        }
+        if (i === 1) {
+          enemyMatrix[0][i][j] = mapArray[enemyRow][(enemyCol - 1) + j];
+          enemyMatrix[1][i][j] = mapArray[enemy2Row][(enemy2Col - 1) + j];
+        }
+        if (i === 2) {
+          enemyMatrix[0][i][j] = mapArray[enemyRow + 1][(enemyCol - 1) + j];
+          enemyMatrix[2][i][j] = mapArray[enemy2Row + 1][(enemy2Col - 1) + j];
+        }
+      }
+    }
+    console.log("enemy Matrix");
+    console.log(enemyMatrix);
+  }
+  //function to move enemy if he got nerby spaces
+  //AI function
+  function autoMoveEnemy(){
+    //check top move
+    if(enemyMatrix[0][1] === character.FLOOR){ /// improve both enemy moving 
+      mapArray[enemyRow][enemyCol] = character.FLOOR;
+      enemyRow--;
+      mapArray[enemyRow][enemyCol] = character.HERO;
+    }
+    //check bot move
+    else if(enemyMatrix[2][1]=== character.FLOOR){
+      mapArray[enemyRow][enemyCol] = character.FLOOR;
+      enemyRow++;
+      mapArray[enemyRow][enemyCol] = character.HERO;
+    }
+    
+    //check left move
+    else if(enemyMatrix[1][0]=== character.FLOOR){
+      mapArray[enemyRow][enemyCol] = character.FLOOR;
+      enemyCol--;
+      mapArray[enemyRow][enemyCol] = character.HERO;
+    }
+
+    //check right move
+    else if(enemyMatrix[1][2]=== character.FLOOR){
+      mapArray[enemyRow][enemyCol] = character.FLOOR;
+      enemyCol++;
+      mapArray[enemyRow][enemyCol] = character.HERO;
+    }
+
+
   }
   //function that update the hero localization
   function updateHeroMatrix() {
@@ -221,7 +339,7 @@
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY) {//validações criadas
         if(heroMatrix[0][1] === character.KEY){
-          keys++;
+          trade();
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
@@ -230,7 +348,7 @@
       } break;
       case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR || heroMatrix[2][1] === character.KEY) {
         if(heroMatrix[2][1] === character.KEY){
-          keys++;
+          trade();
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow++;
@@ -239,7 +357,7 @@
       } break;
       case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR || heroMatrix[1][0] === character.KEY) {
         if(heroMatrix[1][0] === character.KEY){
-          keys++;
+          trade();
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
@@ -248,7 +366,7 @@
       } break;
       case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR || heroMatrix[1][2] === character.KEY) {
         if(heroMatrix[1][2] === character.KEY){
-          keys++;
+          trade();
         }
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
@@ -257,19 +375,26 @@
       } break;
       
 
-    }
-    switch (mapArray[playerRow][playerColumn]) {
-      case character.ENEMY: fight();
-        break;
-      case character.KEY: trade();
-        break;
-      case character.DOORLOCK: endGame();
-        break;
-
-    }
-    
+    }    
   }
 
+  //not working
+  /*to do*/
+  function checkObjects(col,row){
+
+        switch (heroMatrix) {
+
+          case heroMatrix[col][row] === character.ENEMY  : fight();
+            break;
+          case heroMatrix[col][row] === character.KEY: trade();
+            break;
+          case heroMatrix[col][row] === character.DOORLOCK: endGame();
+            break;
+    
+
+    }
+ 
+  }
   function endGame() {
     /*completar*/
     // 1 - verificar se se atingiu o objectivo (castelo)
@@ -284,5 +409,6 @@
 
   function trade(){
     keys++;
+    console.log(keys);
   }
 })();
