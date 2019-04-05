@@ -409,7 +409,33 @@
         mapArray[playerRow][playerColumn] = character.HERO;
         render();
       } break;
-      
+       case teclado.SPACE: {
+        if (heroMatrix[0][1] === character.ICESTONE) {
+          mapArray[playerRow][playerColumn] = character.FLOOR;
+          playerRow--;
+          mapArray[playerRow][playerColumn] = character.HERO;
+        }
+
+        else if (heroMatrix[2][1] === character.ICESTONE) {
+          mapArray[playerRow][playerColumn] = character.FLOOR;
+          playerRow++;
+          mapArray[playerRow][playerColumn] = character.HERO;
+          
+        }
+        else if (heroMatrix[1][0] === character.ICESTONE) {
+          mapArray[playerRow][playerColumn] = character.FLOOR;
+          playerColumn--;
+          mapArray[playerRow][playerColumn] = character.HERO;
+          
+        }
+        else if (heroMatrix[1][2] === character.ICESTONE) {
+          mapArray[playerRow][playerColumn] = character.FLOOR;
+          playerColumn++;
+          mapArray[playerRow][playerColumn] = character.HERO;
+          
+        }
+        render();
+    } break;
 
     }    
   }
