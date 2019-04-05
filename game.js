@@ -161,6 +161,7 @@
 
     output.innerHTML = gameMessage;
     gameMessage = "Keys : " + keys;
+    gameMessage += "\n Bones : " + bones;
   }
 
 
@@ -508,22 +509,16 @@
       mapArray[playerRow][playerColumn] = character.FLOOR;
       playerRow++;
       mapArray[playerRow][playerColumn] = character.HERO;
-      
-
     }
     else if (heroMatrix[1][0] === character.ICESTONE) {
       mapArray[playerRow][playerColumn] = character.FLOOR;
       playerColumn--;
       mapArray[playerRow][playerColumn] = character.HERO;
-      
-
-    }
+  }
     else if (heroMatrix[1][2] === character.ICESTONE) {
       mapArray[playerRow][playerColumn] = character.FLOOR;
       playerColumn++;
       mapArray[playerRow][playerColumn] = character.HERO;
-
-
     }
     else if (heroMatrix[0][1] === character.STONELOCK) {
       if (bones > 0) {
