@@ -289,29 +289,34 @@
   //function to move enemy if he got nerby spaces
   //AI function
   function autoMoveEnemy(){
-    let autoNumb = Math.random() * (2 - 1) + 1;
+    let autoNumb = Math.floor(Math.random() * (4 - 0) + 0);
+    console.log(autoNumb);
     switch(autoNumb){
+    case 0: aiAutoEnemyThree();
+    break;
      case 1: aiAutoEnemyOne();
      break;
      case 2: aiAutoEnemyTow();
+     break;
+     case 3 : aiAutoEnemyFour();
      break;
     }  
   }
   function aiAutoEnemyOne(){
     //check left move
-    if(enemyMatrix[0][1][0]=== character.FLOOR ){
+    if(enemyMatrix[0][1][0] === character.FLOOR ){
       mapArray[enemyRow][enemyCol] = character.FLOOR;
       enemyCol--;
       mapArray[enemyRow][enemyCol] = character.ENEMY;  
     }
     //check bot move
-    else if(enemyMatrix[0][2][1]=== character.FLOOR ){
+    else if(enemyMatrix[0][2][1] === character.FLOOR ){
       mapArray[enemyRow][enemyCol] = character.FLOOR;
       enemyRow++;
       mapArray[enemyRow][enemyCol] = character.ENEMY; 
     }
     //check right move
-    else if(enemyMatrix[0][1][2]=== character.FLOOR){
+     else if(enemyMatrix[0][1][2]=== character.FLOOR){
       mapArray[enemyRow][enemyCol] = character.FLOOR;
       enemyCol++;
       mapArray[enemyRow][enemyCol] = character.ENEMY;
@@ -331,11 +336,11 @@
     enemy2Col++;
     mapArray[enemy2Row][enemy2Col] = character.ENEMY;
   } 
-  //check bot move
-  else if(enemyMatrix[1][2][1]=== character.FLOOR){
-    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
-    enemy2Row++;
-    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+    //check top move
+  else if(enemyMatrix[1][0][1]=== character.FLOOR){
+      mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+      enemy2Row--;
+      mapArray[enemy2Row][enemy2Col] = character.ENEMY;
   } 
      // check left move
   else if(enemyMatrix[1][1][0]=== character.FLOOR){
@@ -343,11 +348,67 @@
     enemy2Col--;
     mapArray[enemy2Row][enemy2Col] = character.ENEMY;
   } 
-  //check top move
-  else if(enemyMatrix[1][0][1]=== character.FLOOR){
-      mapArray[enemy2Row][enemy2Col] = character.FLOOR;
-      enemy2Row--;
-      mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+  //check bot move
+  else if(enemyMatrix[1][2][1]=== character.FLOOR){
+    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+    enemy2Row++;
+    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+  } 
+
+  }
+  function aiAutoEnemyThree(){
+
+      //check  right move and top
+  if( enemyMatrix[0][1][2]=== character.FLOOR && enemyMatrix[0][1][0]=== character.FLOOR){
+    mapArray[enemyRow][enemyCol] = character.FLOOR;
+
+    enemyMatrix[0][2][1]=== character.FLOOR ? enemyCol++ : enemyRow --;
+
+    mapArray[enemyRow][enemyCol] = character.ENEMY;
+  } 
+    //check left and top
+  else if(enemyMatrix[0][1][0]=== character.FLOOR && enemyMatrix[0][0][1]=== character.FLOOR){
+    mapArray[enemyRow][enemyCol] = character.FLOOR;
+    enemyMatrix[0][2][1]=== character.FLOOR ? enemyCol-- : enemyRow--;
+    mapArray[enemyRow][enemyCol] = character.ENEMY;
+  }
+  //check  right move and bot
+  if( enemyMatrix[1][1][2]=== character.FLOOR && enemyMatrix[1][2][1]=== character.FLOOR){
+    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+    enemyMatrix[1][0][1]=== character.FLOOR ? enemy2Col++ : enemy2Row++;
+    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+  } 
+  //check left and top
+  else if(enemyMatrix[1][1][0]=== character.FLOOR && enemyMatrix[1][0][1]=== character.FLOOR){
+    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+    enemyMatrix[1][2][1]=== character.FLOOR ? enemy2Col-- : enemy2Row--;
+    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+  }
+ 
+  }
+  function aiAutoEnemyFour(){
+          //check  top
+  if( enemyMatrix[0][0][1]=== character.FLOOR ){
+    mapArray[enemyRow][enemyCol] = character.FLOOR;
+    enemyMatrix[0][2][1]=== character.FLOOR ? enemyRow++ : enemyRow --;
+    mapArray[enemyRow][enemyCol] = character.ENEMY;
+  } 
+  //check  bot
+  else if( enemyMatrix[0][2][1]=== character.FLOOR ){
+    mapArray[enemyRow][enemyCol] = character.FLOOR;
+    enemyMatrix[0][1][0]=== character.FLOOR ? enemyRow++ : enemyCol --;
+    mapArray[enemyRow][enemyCol] = character.ENEMY;
+  } 
+  //check top 
+  if( enemyMatrix[1][0][1]=== character.FLOOR ){
+    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+    enemyMatrix[1][2][1]=== character.FLOOR ? enemy2Row++ : enemy2Row --;
+    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
+  } 
+  else if( enemyMatrix[1][2][1]=== character.FLOOR ){
+    mapArray[enemy2Row][enemy2Col] = character.FLOOR;
+    enemyMatrix[1][1][0]=== character.FLOOR ? enemy2Row++ : enemy2Col --;
+    mapArray[enemy2Row][enemy2Col] = character.ENEMY;
   } 
   }
   //function that update the hero localization
