@@ -443,6 +443,7 @@
         if (heroMatrix[0][1] === character.BONES) {
           trade("bones");
         }
+        
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
         mapArray[playerRow][playerColumn] = character.HERO;
@@ -561,7 +562,6 @@
         keys = keys - 1;
       }
     }
-
     else if (heroMatrix[2][1] === character.DOORLOCK) {
       if (keys > 0) {
         mapArray[playerRow][playerColumn] = character.FLOOR;
@@ -586,24 +586,41 @@
         keys = keys - 1;
       }
     }
-  }
-  //not working
-  /*to do*/
-  function checkObjects(col,row){
 
-        switch (heroMatrix) {
-
-          case heroMatrix[col][row] === character.ENEMY  : fight();
-            break;
-          case heroMatrix[col][row] === character.KEY: trade();
-            break;
-          case heroMatrix[col][row] === character.DOORLOCK: endGame();
-            break;
-    
-
+    else if (heroMatrix[0][1] === character.STAIRE) {
+      
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow-4;
+        playerColumn +6;
+        mapArray[playerRow][playerColumn] = character.HERO;      
     }
- 
+    else if (heroMatrix[2][1] === character.STAIRE) {
+   
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow-4;
+        playerColumn +6;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      
+    }
+    else if (heroMatrix[1][0] === character.STAIRE) {
+     
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow-4;
+        playerColumn +6;
+        mapArray[playerRow][playerColumn] = character.HERO;
+      
+    }
+    else if (heroMatrix[2][1] === character.STAIRE) {
+      
+        mapArray[playerRow][playerColumn] = character.FLOOR;
+        playerRow-4;
+        playerColumn +6;
+        mapArray[playerRow][playerColumn] = character.HERO;
+
+      
+    }
   }
+
   function endGame() {
     /*completar*/
     // 1 - verificar se se atingiu o objectivo (castelo)
