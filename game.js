@@ -178,11 +178,12 @@
         if (heroMatrix[0][1] === character.BONES) {
           trade("bones");
         }
-        
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
         mapArray[playerRow][playerColumn] = character.HERO;
+        
         render();
+ 
       }
         break;
 
@@ -224,13 +225,17 @@
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
         mapArray[playerRow][playerColumn] = character.HERO;
-        render();
+        render();  
       }
         break;
 
       case teclado.SPACE: {
         verify();
 
+      if(heroMatrix[0][1] === character.ENEMY || heroMatrix[1][0] === character.ENEMY 
+      || heroMatrix[2][1] === character.ENEMY || heroMatrix[1][2] === character.ENEMY){
+          fightEnemy();
+      }
       if(heroMatrix[0][1] === character.QUESTION || heroMatrix[2][1] === character.QUESTION
       ||heroMatrix[1][2] === character.QUESTION ||heroMatrix[1][0] === character.QUESTION)
       questPicker();
@@ -242,7 +247,7 @@
       if(heroMatrix[0][1] === character.STAIRS || heroMatrix[2][1] === character.STAIRS
       ||heroMatrix[1][2] === character.STAIRS ||heroMatrix[1][0] === character.STAIRS)
       endGame();
-            
+       
       render();
       } break;
     }
@@ -276,7 +281,7 @@
           || rowNumb > 6 && rowNumb < 19 && colNumb === 14
           || rowNumb === 13 && colNumb === 3
           || rowNumb === 12 && colNumb === 3
-          || rowNumb === 2 && colNumb < 18 && colNumb > 12
+          || rowNumb === 2 && colNumb < 18 && colNumb > 12 && colNumb != 15
           || rowNumb === 3 && colNumb === 13
           || rowNumb === 3 && colNumb === 16
           || rowNumb === 9 && colNumb < 3 && colNumb > 0
@@ -373,17 +378,19 @@
   //function to move enemy if he got nerby spaces
   //AI function
   function autoMoveEnemy() {
-    let autoNumb = Math.floor(Math.random() * (4 - 0) + 0);
+    let autoNumb = Math.floor(Math.random() * (5 - 0) + 0);
     console.log(autoNumb);
     switch (autoNumb) {
-      case 0: aiAutoEnemyThree();
+      case 0: aiAutoEnemyOne();
         break;
-      case 1: aiAutoEnemyOne();
+      case 1: aiAutoEnemyTow();
         break;
-      case 2: aiAutoEnemyTow();
+      case 2: aiAutoEnemyThree();
         break;
       case 3: aiAutoEnemyFour();
         break;
+      case 4 :defaultAiAutoLeft();
+      break;
     }
   }
   function aiAutoEnemyOne() {
@@ -445,27 +452,25 @@
     //check  right move and top
     if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-
-      enemyMatrix[0][2][1] === character.FLOOR ? enemyColumn++ : enemyRow--;
-
+      enemyColumn++ ;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[0][1][0] === character.FLOOR && enemyMatrix[0][0][1] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-      enemyMatrix[0][2][1] === character.FLOOR ? enemyColumn-- : enemyRow--;
+      enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyColumn-- ;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check  right move and bot
     if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemyMatrix[1][0][1] === character.FLOOR ? enemy2Column++ : enemy2Row++;
+      enemy2Column++ ;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[1][1][0] === character.FLOOR && enemyMatrix[1][0][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemyMatrix[1][2][1] === character.FLOOR ? enemy2Column-- : enemy2Row--;
+      enemyMatrix[1][2][1] === character.FLOOR ?  enemy2Row++:  enemy2Column-- ;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
 
@@ -474,25 +479,56 @@
     //check  top
     if (enemyMatrix[0][0][1] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-      enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyRow--;
+      enemyRow--;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check  bot
     else if (enemyMatrix[0][2][1] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-      enemyMatrix[0][1][0] === character.FLOOR ? enemyRow++ : enemyColumn--;
+      enemyMatrix[0][1][0] === character.FLOOR ? enemyColumn-- : enemyRow++;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check top 
     if (enemyMatrix[1][0][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemyMatrix[1][2][1] === character.FLOOR ? enemy2Row++ : enemy2Row--;
+      enemy2Row--;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
+    //check bot
     else if (enemyMatrix[1][2][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemyMatrix[1][1][0] === character.FLOOR ? enemy2Row++ : enemy2Column--;
+      //check left
+      enemyMatrix[1][1][0] === character.FLOOR ? enemy2Column-- : enemy2Row++;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+    }
+  }
+  function defaultAiAutoLeft(){
+        //default to chekc if is wall arround player
+    if (enemyMatrix[0][0][1] != character.FLOOR && enemyMatrix[0][1][2] != character.FLOOR
+      && enemyMatrix[0][2][1] != character.FLOOR){
+        mapArray[enemyRow][enemyColumn] = character.FLOOR;
+        enemyColumn--;
+        mapArray[enemyRow][enemyColumn] = character.ENEMY;  
+    }
+    else if(enemyMatrix[0][1][0] != character.FLOOR && enemyMatrix[0][0][1] != character.FLOOR
+      && enemyMatrix[0][2][1] != character.FLOOR){
+        mapArray[enemyRow][enemyColumn] = character.FLOOR;
+        enemyColumn++;
+        mapArray[enemyRow][enemyColumn] = character.ENEMY;  
+    }
+
+            //default to chekc if is wall arround player
+    if (enemyMatrix[1][0][1] != character.FLOOR && enemyMatrix[1][1][2] != character.FLOOR
+      && enemyMatrix[1][2][1] != character.FLOOR){
+        mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+        enemy2Column--;
+        mapArray[enemy2Row][enemy2Column] = character.ENEMY;  
+    }
+    else if(enemyMatrix[1][1][0] != character.FLOOR && enemyMatrix[1][0][1] != character.FLOOR
+      && enemyMatrix[1][2][1] != character.FLOOR){
+        mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+        enemy2Column++;
+        mapArray[enemy2Row][enemy2Column] = character.ENEMY;  
     }
   }
   //function that update the hero localization
@@ -661,8 +697,18 @@
     randomEnemyForce = Math.floor(Math.random(1 , 50));
     randomPlayerForce = Math.floor(Math.random(1 , 50));
 
-    randomEnemyForce > randomPlayerForce ? endGame(): gameMessage += " you won this fight";
+    if(randomEnemyForce > randomPlayerForce){
+      endGame();
+
     }
+    else{
+      mapArray[playerRow][playerColumn] = character.FLOOR;
+      playerColumn++;
+      mapArray[playerRow][playerColumn] = character.HERO;
+      gameMessage += " you won this fight";
+    }
+  }
+
   function endGame() {
      if (heroMatrix[0][1] === character.STAIRS 
       ||heroMatrix[2][1] === character.STAIRS
@@ -673,7 +719,7 @@
           stage.removeChild(stage.firstChild);
         }
 
-        alert("This is the end!!!")
+        alert("This is the end!!!");
 
       }
 
