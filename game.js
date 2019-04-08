@@ -131,28 +131,50 @@
         cell.setAttribute("class", "cell");
         stage.appendChild(cell);
 
+        let cell2 = document.createElement("img");
+
         switch (mapArray[row][col]) {
-          case character.HERO: cell.classList.add('actor'); break;
-          case character.QUESTION: cell.classList.add('question'); break;
+          case character.HERO:         
+          cell2.setAttribute("class", "cell actor");
+          stage.appendChild(cell2);
+          break;
+          case character.QUESTION:
+          cell2.setAttribute("class", "cell question");
+          stage.appendChild(cell2);
+          break;
           case character.KEY: 
+          cell2.setAttribute("class", "cell key");
           questNumber === 2 ?
-          cell.classList.add('key'): cell.classList.add('floor') ; break;
-          case character.ENEMY: cell.classList.add('enemy'); break;
+          stage.appendChild(cell2)
+          : cell.classList.add('floor') ; break;
+
+          case character.ENEMY:
+          cell2.setAttribute("class", "cell enemy");
+          stage.appendChild(cell2);
+          break;
           case character.FLOOR: cell.classList.add('floor'); break;
           case character.WALL: cell.classList.add('wall'); break;
           case character.STAIRE: cell.classList.add('stairsE'); break;
           case character.STAIRS: cell.classList.add('stairsS'); break;
           case character.DOORLOCK: cell.classList.add('doorLock'); break;
           case character.STONELOCK: cell.classList.add('stoneLock'); break;
-          case character.ICESTONE: cell.classList.add('iceStone'); break;
+          case character.ICESTONE:
+          cell2.setAttribute("class", "cell iceStone");
+          stage.appendChild(cell2);
+          break;
           case character.BONES:
+          cell2.setAttribute("class", "cell bones");
           questNumber === 1 ?
-          cell.classList.add('bones'):cell.classList.add('floor'); break;
+          stage.appendChild(cell2):cell.classList.add('floor'); break;
         }
+
         cell.style.top = row * SIZE + "px";
         cell.style.left = col * SIZE + "px";
+        
+        cell2.style.top = row * SIZE + "px";
+        cell2.style.left = col * SIZE + "px";
       }
-
+      
     }
 
     playerColumn != null ? updateHeroMatrix() : null;
