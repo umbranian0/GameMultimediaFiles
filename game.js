@@ -134,47 +134,53 @@
         let cell2 = document.createElement("img");
 
         switch (mapArray[row][col]) {
-          case character.HERO:         
-          cell2.setAttribute("class", "cell actor");
-          stage.appendChild(cell2);
-          break;
+          case character.HERO:
+            cell2.setAttribute("class", "cell actor");
+            stage.appendChild(cell2);
+            break;
           case character.QUESTION:
-          cell2.setAttribute("class", "cell question");
-          stage.appendChild(cell2);
-          break;
-          case character.KEY: 
-          cell2.setAttribute("class", "cell key");
-          questNumber === 2 ?
-          stage.appendChild(cell2)
-          : cell.classList.add('floor') ; break;
+            cell2.setAttribute("class", "cell question");
+            stage.appendChild(cell2);
+            break;
+          case character.KEY:
+            cell2.setAttribute("class", "cell key");
+            questNumber === 2 ?
+              stage.appendChild(cell2)
+              : cell.classList.add('floor'); break;
 
           case character.ENEMY:
-          cell2.setAttribute("class", "cell enemy");
-          stage.appendChild(cell2);
-          break;
+            cell2.setAttribute("class", "cell enemy");
+            stage.appendChild(cell2);
+            break;
           case character.FLOOR: cell.classList.add('floor'); break;
           case character.WALL: cell.classList.add('wall'); break;
-          case character.STAIRE: cell.classList.add('stairsE'); break;
-          case character.STAIRS: cell.classList.add('stairsS'); break;
+          case character.STAIRE:
+            cell2.setAttribute("class", "cell stairsE");
+            stage.appendChild(cell2);
+            break;
+          case character.STAIRS:
+            cell2.setAttribute("class", "cell stairsS");
+            stage.appendChild(cell2);
+            break;
           case character.DOORLOCK: cell.classList.add('doorLock'); break;
           case character.STONELOCK: cell.classList.add('stoneLock'); break;
           case character.ICESTONE:
-          cell2.setAttribute("class", "cell iceStone");
-          stage.appendChild(cell2);
-          break;
+            cell2.setAttribute("class", "cell iceStone");
+            stage.appendChild(cell2);
+            break;
           case character.BONES:
-          cell2.setAttribute("class", "cell bones");
-          questNumber === 1 ?
-          stage.appendChild(cell2):cell.classList.add('floor'); break;
+            cell2.setAttribute("class", "cell bones");
+            questNumber === 1 ?
+              stage.appendChild(cell2) : cell.classList.add('floor'); break;
         }
 
         cell.style.top = row * SIZE + "px";
         cell.style.left = col * SIZE + "px";
-        
+
         cell2.style.top = row * SIZE + "px";
         cell2.style.left = col * SIZE + "px";
       }
-      
+
     }
 
     playerColumn != null ? updateHeroMatrix() : null;
@@ -192,7 +198,7 @@
 
   function keydownHandler(event) {
     switch (event.keyCode) {
-      case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY 
+      case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY
         || heroMatrix[0][1] === character.BONES) {//validações criadas
         if (heroMatrix[0][1] === character.KEY) {
           trade("keys");
@@ -203,9 +209,9 @@
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerRow--;
         mapArray[playerRow][playerColumn] = character.HERO;
-        
+
         render();
- 
+
       }
         break;
 
@@ -247,30 +253,30 @@
         mapArray[playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
         mapArray[playerRow][playerColumn] = character.HERO;
-        render();  
+        render();
       }
         break;
 
       case teclado.SPACE: {
         verify();
 
-      if(heroMatrix[0][1] === character.ENEMY || heroMatrix[1][0] === character.ENEMY 
-      || heroMatrix[2][1] === character.ENEMY || heroMatrix[1][2] === character.ENEMY){
+        if (heroMatrix[0][1] === character.ENEMY || heroMatrix[1][0] === character.ENEMY
+          || heroMatrix[2][1] === character.ENEMY || heroMatrix[1][2] === character.ENEMY) {
           fightEnemy();
-      }
-      if(heroMatrix[0][1] === character.QUESTION || heroMatrix[2][1] === character.QUESTION
-      ||heroMatrix[1][2] === character.QUESTION ||heroMatrix[1][0] === character.QUESTION)
-      questPicker();
+        }
+        if (heroMatrix[0][1] === character.QUESTION || heroMatrix[2][1] === character.QUESTION
+          || heroMatrix[1][2] === character.QUESTION || heroMatrix[1][0] === character.QUESTION)
+          questPicker();
 
-      if(heroMatrix[0][1] === character.STAIRE || heroMatrix[2][1] === character.STAIRE
-      ||heroMatrix[1][2] === character.STAIRE ||heroMatrix[1][0] === character.STAIRE)
-      stairsENavigator();
+        if (heroMatrix[0][1] === character.STAIRE || heroMatrix[2][1] === character.STAIRE
+          || heroMatrix[1][2] === character.STAIRE || heroMatrix[1][0] === character.STAIRE)
+          stairsENavigator();
 
-      if(heroMatrix[0][1] === character.STAIRS || heroMatrix[2][1] === character.STAIRS
-      ||heroMatrix[1][2] === character.STAIRS ||heroMatrix[1][0] === character.STAIRS)
-      endGame();
-       
-      render();
+        if (heroMatrix[0][1] === character.STAIRS || heroMatrix[2][1] === character.STAIRS
+          || heroMatrix[1][2] === character.STAIRS || heroMatrix[1][0] === character.STAIRS)
+          endGame();
+
+        render();
       } break;
     }
   }
@@ -327,7 +333,7 @@
         }
 
         //setting keys
-        if (rowNumb === 15 && colNumb === 1 || rowNumb === 13 && colNumb === 1 ) {
+        if (rowNumb === 15 && colNumb === 1 || rowNumb === 13 && colNumb === 1) {
           mapArray[rowNumb][colNumb] = 5;
         }
 
@@ -411,8 +417,8 @@
         break;
       case 3: aiAutoEnemyFour();
         break;
-      case 4 :defaultAiAutoLeft();
-      break;
+      case 4: defaultAiAutoLeft();
+        break;
     }
   }
   function aiAutoEnemyOne() {
@@ -474,25 +480,25 @@
     //check  right move and top
     if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-      enemyColumn++ ;
+      enemyColumn++;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[0][1][0] === character.FLOOR && enemyMatrix[0][0][1] === character.FLOOR) {
       mapArray[enemyRow][enemyColumn] = character.FLOOR;
-      enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyColumn-- ;
+      enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyColumn--;
       mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
     //check  right move and bot
     if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemy2Column++ ;
+      enemy2Column++;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[1][1][0] === character.FLOOR && enemyMatrix[1][0][1] === character.FLOOR) {
       mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-      enemyMatrix[1][2][1] === character.FLOOR ?  enemy2Row++:  enemy2Column-- ;
+      enemyMatrix[1][2][1] === character.FLOOR ? enemy2Row++ : enemy2Column--;
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
 
@@ -524,33 +530,33 @@
       mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
   }
-  function defaultAiAutoLeft(){
-        //default to chekc if is wall arround player
+  function defaultAiAutoLeft() {
+    //default to chekc if is wall arround player
     if (enemyMatrix[0][0][1] != character.FLOOR && enemyMatrix[0][1][2] != character.FLOOR
-      && enemyMatrix[0][2][1] != character.FLOOR){
-        mapArray[enemyRow][enemyColumn] = character.FLOOR;
-        enemyColumn--;
-        mapArray[enemyRow][enemyColumn] = character.ENEMY;  
+      && enemyMatrix[0][2][1] != character.FLOOR) {
+      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      enemyColumn--;
+      mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
-    else if(enemyMatrix[0][1][0] != character.FLOOR && enemyMatrix[0][0][1] != character.FLOOR
-      && enemyMatrix[0][2][1] != character.FLOOR){
-        mapArray[enemyRow][enemyColumn] = character.FLOOR;
-        enemyColumn++;
-        mapArray[enemyRow][enemyColumn] = character.ENEMY;  
+    else if (enemyMatrix[0][1][0] != character.FLOOR && enemyMatrix[0][0][1] != character.FLOOR
+      && enemyMatrix[0][2][1] != character.FLOOR) {
+      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      enemyColumn++;
+      mapArray[enemyRow][enemyColumn] = character.ENEMY;
     }
 
-            //default to chekc if is wall arround player
+    //default to chekc if is wall arround player
     if (enemyMatrix[1][0][1] != character.FLOOR && enemyMatrix[1][1][2] != character.FLOOR
-      && enemyMatrix[1][2][1] != character.FLOOR){
-        mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-        enemy2Column--;
-        mapArray[enemy2Row][enemy2Column] = character.ENEMY;  
+      && enemyMatrix[1][2][1] != character.FLOOR) {
+      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      enemy2Column--;
+      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
-    else if(enemyMatrix[1][1][0] != character.FLOOR && enemyMatrix[1][0][1] != character.FLOOR
-      && enemyMatrix[1][2][1] != character.FLOOR){
-        mapArray[enemy2Row][enemy2Column] = character.FLOOR;
-        enemy2Column++;
-        mapArray[enemy2Row][enemy2Column] = character.ENEMY;  
+    else if (enemyMatrix[1][1][0] != character.FLOOR && enemyMatrix[1][0][1] != character.FLOOR
+      && enemyMatrix[1][2][1] != character.FLOOR) {
+      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      enemy2Column++;
+      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
     }
   }
   //function that update the hero localization
@@ -662,19 +668,19 @@
       }
     }
   }
-  
-  function stairsENavigator(){
+
+  function stairsENavigator() {
     //stairs navigator
-    if (heroMatrix[0][1] === character.STAIRE 
-      ||heroMatrix[2][1] === character.STAIRE
-      ||heroMatrix[1][0] === character.STAIRE
-      ||heroMatrix[1][2] === character.STAIRE) {
+    if (heroMatrix[0][1] === character.STAIRE
+      || heroMatrix[2][1] === character.STAIRE
+      || heroMatrix[1][0] === character.STAIRE
+      || heroMatrix[1][2] === character.STAIRE) {
       mapArray[playerRow][playerColumn] = character.FLOOR;
-      if(playerColumn < 10){
+      if (playerColumn < 10) {
         playerColumn = 13;
         playerRow = 11;
       }
-      else{
+      else {
         playerColumn = 6;
         playerRow = 18;
       }
@@ -683,23 +689,23 @@
 
 
   }
-  function questPicker(){
+  function questPicker() {
     console.log("quest picker");
-      mapArray[playerRow][playerColumn] = character.FLOOR;
-      
-        heroMatrix[0][1] === character.QUESTION ? playerRow-- : null;
+    mapArray[playerRow][playerColumn] = character.FLOOR;
 
-        heroMatrix[2][1] === character.QUESTION ? playerRow++: null;
-        
-        heroMatrix[1][0] === character.QUESTION ? playerColumn-- :null;
-       
-        heroMatrix[1][2] === character.QUESTION? playerColumn++ :null;
-   
-      mapArray[playerRow][playerColumn] = character.HERO;
-      questNumber++;
-      if(questNumber == 1)
+    heroMatrix[0][1] === character.QUESTION ? playerRow-- : null;
+
+    heroMatrix[2][1] === character.QUESTION ? playerRow++ : null;
+
+    heroMatrix[1][0] === character.QUESTION ? playerColumn-- : null;
+
+    heroMatrix[1][2] === character.QUESTION ? playerColumn++ : null;
+
+    mapArray[playerRow][playerColumn] = character.HERO;
+    questNumber++;
+    if (questNumber == 1)
       alert(" Check The map ! And get out of here! ");
-      else
+    else
       alert(" Now you can hundle it! ")
   }
 
@@ -713,17 +719,17 @@
     console.log(keys);
   }
 
-  function fightEnemy(){
+  function fightEnemy() {
     let randomEnemyForce;
     let randomPlayerForce;
-    randomEnemyForce = Math.floor(Math.random(1 , 50));
-    randomPlayerForce = Math.floor(Math.random(1 , 50));
+    randomEnemyForce = Math.floor(Math.random(1, 50));
+    randomPlayerForce = Math.floor(Math.random(1, 50));
 
-    if(randomEnemyForce > randomPlayerForce){
+    if (randomEnemyForce > randomPlayerForce) {
       endGame();
 
     }
-    else{
+    else {
       mapArray[playerRow][playerColumn] = character.FLOOR;
       playerColumn++;
       mapArray[playerRow][playerColumn] = character.HERO;
@@ -732,18 +738,18 @@
   }
 
   function endGame() {
-     if (heroMatrix[0][1] === character.STAIRS 
-      ||heroMatrix[2][1] === character.STAIRS
-      ||heroMatrix[1][0] === character.STAIRS
-      ||heroMatrix[1][2] === character.STAIRS) {
+    if (heroMatrix[0][1] === character.STAIRS
+      || heroMatrix[2][1] === character.STAIRS
+      || heroMatrix[1][0] === character.STAIRS
+      || heroMatrix[1][2] === character.STAIRS) {
 
-        while (stage.hasChildNodes()) {
-          stage.removeChild(stage.firstChild);
-        }
-
-        alert("This is the end!!!");
-
+      while (stage.hasChildNodes()) {
+        stage.removeChild(stage.firstChild);
       }
+
+      alert("This is the end!!!");
+
+    }
 
     window.removeEventListener("keydown", keydownHandler, false);
   }
