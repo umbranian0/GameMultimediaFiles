@@ -26,7 +26,7 @@
   }
 
   var mapArray;
-
+  var mapNumber = 0;
   //hero matrix stores values around the hero 3x3 array
   var heroMatrix;
   var enemyMatrix;
@@ -73,7 +73,6 @@
     firstTime = true;
     stageWidth = document.getElementById('stage').clientWidth;
     stageHeigth = document.getElementById('stage').clientHeight;
-    console.log("Stage width and heigth " + stageWidth + "  ," + stageHeigth);
 
     //contrução de um array para o mapa, de modo a inserir bonecos 
     //  daw map array
@@ -88,32 +87,30 @@
   //function that stores the map 
   //then assign it to global vars
   function findGameObjects() {
+    resetVariables();
+
     for (let row = 0; row < ROWS; row++) {
       for (let column = 0; column < COLUMNS; column++) {
         //store Hero Position
-        if (mapArray[row][column] === character.HERO) {
+        if (mapArray[mapNumber][row][column] === character.HERO) {
           playerColumn = column;
-          console.log(`playercol ${playerColumn}`);
           playerRow = row;
         }
-        if (mapArray[row][column] === character.ENEMY) {
+        if (mapArray[mapNumber][row][column] === character.ENEMY) {
           if (enemyColumn === undefined) {
             enemyColumn = column;
             enemyRow = row;
-            console.log(enemyColumn);
           }
           else if (enemy2Column === undefined) {
             enemy2Column = column;
             enemy2Row = row;
-            console.log(enemy2Column);
           }
 
         }
-        if (mapArray[row][column] === character.STONELOCK) {
+        if (mapArray[mapNumber][row][column] === character.STONELOCK) {
           stoneLockCol = column;
           stoneLockRow = row;
         }
-        //...
       }
     }
 
@@ -133,9 +130,20 @@
 
         let cell2 = document.createElement("img");
 
-        switch (mapArray[row][col]) {
+        switch (mapArray[mapNumber][row][col]) {
           case character.HERO:
-            cell2.setAttribute("class", "cell actor");
+
+            switch (event.keyCode) {
+              case teclado.DOWN: cell2.setAttribute("class", "cell actor down animated walk ");
+                break;
+              case teclado.RIGHT: cell2.setAttribute("class", "cell actor right animated walk ");
+                break;
+              case teclado.LEFT: cell2.setAttribute("class", "cell actor left animated walk ");
+                break;
+              default:
+                cell2.setAttribute("class", "cell actor animated walk");
+                break;
+            }
             stage.appendChild(cell2);
             break;
           case character.QUESTION:
@@ -149,7 +157,7 @@
               : cell.classList.add('floor'); break;
 
           case character.ENEMY:
-            cell2.setAttribute("class", "cell enemy");
+            cell2.setAttribute("class", "cell enemy animated walk");
             stage.appendChild(cell2);
             break;
           case character.FLOOR: cell.classList.add('floor'); break;
@@ -185,7 +193,7 @@
 
     playerColumn != null ? updateHeroMatrix() : null;
 
-    if (enemyRow != null && enemy2Row != null) {
+    if (enemyRow != null && enemy2Row != null && event.keyCode != teclado.SPACE) {
       updateEnemyMatrix();
       autoMoveEnemy();
     }
@@ -206,9 +214,9 @@
         if (heroMatrix[0][1] === character.BONES) {
           trade("bones");
         }
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
 
         render();
 
@@ -222,9 +230,10 @@
         if (heroMatrix[2][1] === character.BONES) {
           trade("bones");
         }
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
+
         render();
       }
         break;
@@ -236,9 +245,9 @@
         if (heroMatrix[1][0] === character.BONES) {
           trade("bones");
         }
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         render();
       }
         break;
@@ -250,9 +259,9 @@
         if (heroMatrix[1][2] === character.BONES) {
           trade("bones");
         }
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         render();
       }
         break;
@@ -274,27 +283,38 @@
 
         if (heroMatrix[0][1] === character.STAIRS || heroMatrix[2][1] === character.STAIRS
           || heroMatrix[1][2] === character.STAIRS || heroMatrix[1][0] === character.STAIRS)
-          endGame();
+          nextLevel();
 
         render();
       } break;
     }
   }
   function constructObstacleArray() {
-    console.log("contructObstacleArray;");
     COLUMNS = Math.floor(stageWidth / SIZE);
     ROWS = Math.floor(stageHeigth / SIZE);
-    mapArray = new Array(ROWS).fill(0).map(item => (new Array(COLUMNS).fill(0)));
 
+    //instancia 3 mapas
+    mapArray = new Array(3).fill(0).map(item => new Array(ROWS).fill(0).map(item => (new Array(COLUMNS).fill(0))))
+
+    contructMaps();
+
+    findGameObjects();
+  }
+
+  function contructMaps() {
+    //map 1
     for (let rowNumb = 0; rowNumb < ROWS; rowNumb++) {// i >>
       for (let colNumb = 0; colNumb < COLUMNS; colNumb++) { //ha qualquer erro as rows estao a ser definidas pelo J e nao I
         //hero on position [0][0]
         if (rowNumb === 2 && colNumb === 2) {
-          mapArray[rowNumb][colNumb] = 10;
+          mapArray[0][rowNumb][colNumb] = character.HERO;
+          mapArray[1][rowNumb][colNumb] = character.STAIRS;
         }
-        //contruct position of walls
-        if (rowNumb === 0 || rowNumb === mapArray[0].length || colNumb === 0 || colNumb === COLUMNS - 1) {
-          mapArray[rowNumb][colNumb] = 1;
+
+        //contruct position of wall
+        if (rowNumb === 0 || rowNumb === ROWS - 1 || colNumb === 0 || colNumb === COLUMNS - 1) {
+          mapArray[0][rowNumb][colNumb] = character.WALL;
+          mapArray[1][rowNumb][colNumb] = character.WALL;
         }
         if (rowNumb === 4 && colNumb < 10
           || rowNumb > 4 && rowNumb < 7 && colNumb === 5 && colNumb < 10
@@ -319,64 +339,74 @@
           || rowNumb === 14 && colNumb === 8
           || rowNumb === 1 && colNumb === 4
           || rowNumb === 2 && colNumb > 3 && colNumb < 10) {
-          mapArray[rowNumb][colNumb] = 1;
+          mapArray[0][rowNumb][colNumb] = character.WALL;
+          mapArray[1][rowNumb][colNumb] = character.WALL;
         }
         //setting stairsE
         if (rowNumb === 17 && colNumb === 6
           || rowNumb === 12 && colNumb === 13) {
-          mapArray[rowNumb][colNumb] = 2;
+          mapArray[0][rowNumb][colNumb] = character.STAIRE;
+          mapArray[1][rowNumb][colNumb] = character.STAIRE;
         }
         //doorlock
         if (rowNumb === 7 && colNumb === 17
           || rowNumb === 14 && colNumb === 7) {
-          mapArray[rowNumb][colNumb] = 7;
+          mapArray[0][rowNumb][colNumb] = character.DOORLOCK;
+
         }
+        if (rowNumb === 3 && colNumb === 4 || rowNumb === 14 && colNumb === 7) mapArray[1][rowNumb][colNumb] = character.DOORLOCK;
 
         //setting keys
         if (rowNumb === 15 && colNumb === 1 || rowNumb === 13 && colNumb === 1) {
-          mapArray[rowNumb][colNumb] = 5;
+          mapArray[0][rowNumb][colNumb] = character.KEY;
+          mapArray[1][rowNumb][colNumb] = character.KEY;
         }
 
         //setting Interrogations
         if (rowNumb === 13 && colNumb === 4
           || rowNumb === 3 && colNumb === 17) {
-          mapArray[rowNumb][colNumb] = 8;
+          mapArray[0][rowNumb][colNumb] = character.QUESTION;
+          mapArray[1][rowNumb][colNumb] = character.QUESTION;
         }
 
         //setting Ice
         if (rowNumb === 11 && colNumb === 4
           || rowNumb === 4 && colNumb === 16) {
-          mapArray[rowNumb][colNumb] = 4;
+          mapArray[0][rowNumb][colNumb] = character.ICESTONE;
+          mapArray[1][rowNumb][colNumb] = character.ICESTONE;
         }
 
         //Setting Enemys
         if (rowNumb === 13 && colNumb === 10
           || rowNumb === 6 && colNumb === 2) {
-          mapArray[rowNumb][colNumb] = 11;
+          mapArray[0][rowNumb][colNumb] = character.ENEMY;
+          mapArray[1][rowNumb][colNumb] = character.ENEMY;
         }
 
         //Setting Bones
         if (rowNumb === 1 && colNumb === 17) {
-          mapArray[rowNumb][colNumb] = 9;
+          mapArray[0][rowNumb][colNumb] = character.BONES;
+          mapArray[1][rowNumb][colNumb] = character.BONES;
         }
 
         //Setting StoneLock
         if (rowNumb === 7 && colNumb === 5) {
-          mapArray[rowNumb][colNumb] = 6;
+          mapArray[0][rowNumb][colNumb] = character.STONELOCK;
+          mapArray[1][rowNumb][colNumb] = character.STONELOCK;
         }
 
         //setting stairsS
         if (rowNumb === 6 && colNumb === 17) {
-          mapArray[rowNumb][colNumb] = 3;
+          mapArray[0][rowNumb][colNumb] = character.STAIRS;
+          mapArray[1][rowNumb][colNumb] = character.HERO;
         }
 
       }
 
     }
-    findGameObjects();
-    console.log("map array");
-    console.log(mapArray);
+
   }
+
   function updateEnemyMatrix() {
     enemyMatrix = new Array(2).fill(0).map(item => new Array(3).fill(0).map(item => (new Array(3).fill(0))));
 
@@ -385,29 +415,46 @@
       for (let j = 0; j < 3; j++) {
 
         if (i === 0) {
-          enemyMatrix[0][i][j] = mapArray[enemyRow - 1][(enemyColumn - 1) + j];
-          enemyMatrix[1][i][j] = mapArray[enemy2Row - 1][(enemy2Column - 1) + j];
+          enemyMatrix[0][i][j] = mapArray[mapNumber][enemyRow - 1][(enemyColumn - 1) + j];
+          enemyMatrix[1][i][j] = mapArray[mapNumber][enemy2Row - 1][(enemy2Column - 1) + j];
         }
         if (i === 1) {
-          enemyMatrix[0][i][j] = mapArray[enemyRow][(enemyColumn - 1) + j];
-          enemyMatrix[1][i][j] = mapArray[enemy2Row][(enemy2Column - 1) + j];
+          enemyMatrix[0][i][j] = mapArray[mapNumber][enemyRow][(enemyColumn - 1) + j];
+          enemyMatrix[1][i][j] = mapArray[mapNumber][enemy2Row][(enemy2Column - 1) + j];
         }
         if (i === 2) {
-          enemyMatrix[0][i][j] = mapArray[enemyRow + 1][(enemyColumn - 1) + j];
-          enemyMatrix[1][i][j] = mapArray[enemy2Row + 1][(enemy2Column - 1) + j];
+          enemyMatrix[0][i][j] = mapArray[mapNumber][enemyRow + 1][(enemyColumn - 1) + j];
+          enemyMatrix[1][i][j] = mapArray[mapNumber][enemy2Row + 1][(enemy2Column - 1) + j];
         }
       }
     }
-    console.log("enemy Matrix");
-    console.log(enemyMatrix);
+
   }
 
+  //function that update the hero location
+  function updateHeroMatrix() {
+    heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(0)));
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+
+        if (i === 0) {
+          heroMatrix[i][j] = mapArray[mapNumber][playerRow - 1][(playerColumn - 1) + j];
+        }
+        if (i === 1) {
+          heroMatrix[i][j] = mapArray[mapNumber][playerRow][(playerColumn - 1) + j];
+        }
+        if (i === 2) {
+          heroMatrix[i][j] = mapArray[mapNumber][playerRow + 1][(playerColumn - 1) + j];
+        }
+      }
+    }
+  }
 
   //function to move enemy if he got nerby spaces
   //AI function
   function autoMoveEnemy() {
     let autoNumb = Math.floor(Math.random() * (5 - 0) + 0);
-    console.log(autoNumb);
     switch (autoNumb) {
       case 0: aiAutoEnemyOne();
         break;
@@ -424,54 +471,54 @@
   function aiAutoEnemyOne() {
     //check left move
     if (enemyMatrix[0][1][0] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyColumn--;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check bot move
     else if (enemyMatrix[0][2][1] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyRow++;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check right move
     else if (enemyMatrix[0][1][2] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyColumn++;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check top move
     else if (enemyMatrix[0][0][1] === character.FLOOR) { /// improve both enemy moving 
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyRow--;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
 
   }
   function aiAutoEnemyTow() {
     //check  right move
     if (enemyMatrix[1][1][2] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Column++;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check top move
     else if (enemyMatrix[1][0][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Row--;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     // check left move
     else if (enemyMatrix[1][1][0] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Column--;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check bot move
     else if (enemyMatrix[1][2][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Row++;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
 
   }
@@ -479,191 +526,170 @@
 
     //check  right move and top
     if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyColumn++;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[0][1][0] === character.FLOOR && enemyMatrix[0][0][1] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyColumn--;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check  right move and bot
     if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Column++;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check left and top
     else if (enemyMatrix[1][1][0] === character.FLOOR && enemyMatrix[1][0][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemyMatrix[1][2][1] === character.FLOOR ? enemy2Row++ : enemy2Column--;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
 
   }
   function aiAutoEnemyFour() {
     //check  top
     if (enemyMatrix[0][0][1] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyRow--;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check  bot
     else if (enemyMatrix[0][2][1] === character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyMatrix[0][1][0] === character.FLOOR ? enemyColumn-- : enemyRow++;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     //check top 
     if (enemyMatrix[1][0][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Row--;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     //check bot
     else if (enemyMatrix[1][2][1] === character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       //check left
       enemyMatrix[1][1][0] === character.FLOOR ? enemy2Column-- : enemy2Row++;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
   }
   function defaultAiAutoLeft() {
     //default to chekc if is wall arround player
     if (enemyMatrix[0][0][1] != character.FLOOR && enemyMatrix[0][1][2] != character.FLOOR
       && enemyMatrix[0][2][1] != character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyColumn--;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
     else if (enemyMatrix[0][1][0] != character.FLOOR && enemyMatrix[0][0][1] != character.FLOOR
       && enemyMatrix[0][2][1] != character.FLOOR) {
-      mapArray[enemyRow][enemyColumn] = character.FLOOR;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
       enemyColumn++;
-      mapArray[enemyRow][enemyColumn] = character.ENEMY;
+      mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     }
 
     //default to chekc if is wall arround player
     if (enemyMatrix[1][0][1] != character.FLOOR && enemyMatrix[1][1][2] != character.FLOOR
       && enemyMatrix[1][2][1] != character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Column--;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
     else if (enemyMatrix[1][1][0] != character.FLOOR && enemyMatrix[1][0][1] != character.FLOOR
       && enemyMatrix[1][2][1] != character.FLOOR) {
-      mapArray[enemy2Row][enemy2Column] = character.FLOOR;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
       enemy2Column++;
-      mapArray[enemy2Row][enemy2Column] = character.ENEMY;
+      mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
     }
   }
-  //function that update the hero localization
-  function updateHeroMatrix() {
-    heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(0)));
-
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-
-        if (i === 0) {
-          heroMatrix[i][j] = mapArray[playerRow - 1][(playerColumn - 1) + j];
-        }
-        if (i === 1) {
-          heroMatrix[i][j] = mapArray[playerRow][(playerColumn - 1) + j];
-        }
-        if (i === 2) {
-          heroMatrix[i][j] = mapArray[playerRow + 1][(playerColumn - 1) + j];
-        }
-      }
-    }
-    console.log(heroMatrix);
-  }
-
 
   function verify() {
     if (heroMatrix[0][1] === character.ICESTONE) {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       playerRow--;
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
     else if (heroMatrix[2][1] === character.ICESTONE) {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       playerRow++;
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
     else if (heroMatrix[1][0] === character.ICESTONE) {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       playerColumn--;
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
     else if (heroMatrix[1][2] === character.ICESTONE) {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       playerColumn++;
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
     else if (heroMatrix[0][1] === character.STONELOCK) {
       if (bones > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         bones = bones - 1;
       }
     }
 
     else if (heroMatrix[2][1] === character.STONELOCK) {
       if (bones > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         bones = bones - 1;
       }
     }
     else if (heroMatrix[1][0] === character.STONELOCK) {
       if (bones > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         bones = bones - 1;
       }
     }
     else if (heroMatrix[2][1] === character.STONELOCK) {
       if (bones > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         bones = bones - 1;
       }
     }
     else if (heroMatrix[0][1] === character.DOORLOCK) {
       if (keys > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         keys = keys - 1;
       }
     }
     else if (heroMatrix[2][1] === character.DOORLOCK) {
       if (keys > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerRow++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         keys = keys - 1;
       }
     }
     else if (heroMatrix[1][0] === character.DOORLOCK) {
       if (keys > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn--;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         keys = keys - 1;
       }
     }
     else if (heroMatrix[2][1] === character.DOORLOCK) {
       if (keys > 0) {
-        mapArray[playerRow][playerColumn] = character.FLOOR;
+        mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
         playerColumn++;
-        mapArray[playerRow][playerColumn] = character.HERO;
+        mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
         keys = keys - 1;
       }
     }
@@ -675,7 +701,7 @@
       || heroMatrix[2][1] === character.STAIRE
       || heroMatrix[1][0] === character.STAIRE
       || heroMatrix[1][2] === character.STAIRE) {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       if (playerColumn < 10) {
         playerColumn = 13;
         playerRow = 11;
@@ -684,14 +710,13 @@
         playerColumn = 6;
         playerRow = 18;
       }
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
 
 
   }
   function questPicker() {
-    console.log("quest picker");
-    mapArray[playerRow][playerColumn] = character.FLOOR;
+    mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
 
     heroMatrix[0][1] === character.QUESTION ? playerRow-- : null;
 
@@ -701,7 +726,7 @@
 
     heroMatrix[1][2] === character.QUESTION ? playerColumn++ : null;
 
-    mapArray[playerRow][playerColumn] = character.HERO;
+    mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     questNumber++;
     if (questNumber == 1)
       alert(" Check The map ! And get out of here! ");
@@ -720,24 +745,28 @@
   }
 
   function fightEnemy() {
-    let randomEnemyForce;
-    let randomPlayerForce;
-    randomEnemyForce = Math.floor(Math.random(1, 50));
-    randomPlayerForce = Math.floor(Math.random(1, 50));
+
+   let randomEnemyForce = Math.floor(Math.random(1, 50));
+   let randomPlayerForce = Math.floor(Math.random(1, 50));
 
     if (randomEnemyForce > randomPlayerForce) {
       endGame();
-
     }
     else {
-      mapArray[playerRow][playerColumn] = character.FLOOR;
+      mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
       playerColumn++;
-      mapArray[playerRow][playerColumn] = character.HERO;
+      mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
       gameMessage += " you won this fight";
     }
   }
+  function endGame(){
+    for(let i = 0 ; i < 5 ; i++)
+    alert("you lose");
+    window.removeEventListener("keydown", keydownHandler, false);
+  }
 
-  function endGame() {
+  function nextLevel() {
+    //next level
     if (heroMatrix[0][1] === character.STAIRS
       || heroMatrix[2][1] === character.STAIRS
       || heroMatrix[1][0] === character.STAIRS
@@ -747,11 +776,21 @@
         stage.removeChild(stage.firstChild);
       }
 
-      alert("This is the end!!!");
+      mapArray.length > mapNumber ? mapNumber++ : mapNumber;
+      mapArray.length <= mapNumber ? alert("This is the end!!!") : alert(`Level ${mapNumber + 1}`);
 
     }
 
-    window.removeEventListener("keydown", keydownHandler, false);
+    findGameObjects();
+    render();
+    //  window.removeEventListener("keydown", keydownHandler, false);
   }
 
+  function resetVariables() {
+    questNumber = 0;
+    enemyColumn = undefined;
+    enemyRow = undefined;
+    enemy2Column = undefined;
+    enemy2Row = undefined;
+  }
 })();
