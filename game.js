@@ -124,11 +124,11 @@
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLUMNS; col++) {
         //var for the cell
-        let cell = document.createElement("img");
+        let cell = document.createElement("div");
         cell.setAttribute("class", "cell");
         stage.appendChild(cell);
 
-        let cell2 = document.createElement("img");
+        let cell2 = document.createElement("div");
 
         switch (mapArray[mapNumber][row][col]) {
           case character.HERO:
