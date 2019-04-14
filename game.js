@@ -24,7 +24,7 @@
     HERO: 10,
     ENEMY: 11
   }
-
+  //
   var mapArray;
   var mapNumber = 0;
   //hero matrix stores values around the hero 3x3 array
@@ -63,6 +63,50 @@
     KPAD_PLUS: 107,
     KPAD_MINUS: 109
   };
+  //sound variables
+  var soundsSRC = [
+    "sounds/background.mp3",
+    "sounds/death.mp3",
+    "sounds/fight.mp3",
+    "sounds/score.mp3",
+    "sounds/success.mp3",
+    "sounds/quest.mp3"
+  ]
+  var silenceSound = false;
+  var backgroundSound;
+  var deathSound;
+  var fightSound;
+  var scoreSound;
+  var successSound;
+  var questSound;
+  var silenceButton;
+  // function to load sounds
+  function sound(src) {
+    this.sound = document.createElement("audio");
+    let idName = (src.slice(7)).slice(0, this.length - 4);
+    this.sound.setAttribute("id", idName);
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+
+    this.play = function () {
+      this.sound.play();
+    }
+    this.stop = function () {
+      this.sound.pause();
+    }
+  }
+  function forceInstance() {
+    backgroundSound = document.getElementById('background');
+    backgroundSound.loop = true;
+    deathSound = document.getElementById('death');
+    fightSound = document.getElementById('fight');
+    scoreSound = document.getElementById('score');
+    successSound = document.getElementById('success');
+    questSound = document.getElementById('quest');
+  }
 
   window.addEventListener("load", init, false);
 
@@ -74,7 +118,12 @@
     stageWidth = document.getElementById('stage').clientWidth;
     stageHeigth = document.getElementById('stage').clientHeight;
 
-    //contrução de um array para o mapa, de modo a inserir bonecos 
+    //initialize sounds
+    soundsSRC.forEach(element => {
+      sound(element);
+    });
+    forceInstance();
+    backgroundSound.play();
     //  daw map array
     //initialize game variables
     constructObstacleArray();
@@ -83,7 +132,12 @@
     render();
 
     window.addEventListener("keydown", keydownHandler);
+
+    createSilenceButton();
+
+    silenceButton.addEventListener("click", soundConfiguration);
   }
+
   //function that stores the map 
   //then assign it to global vars
   function findGameObjects() {
@@ -113,6 +167,7 @@
     }
     console.log(enemy2Row);
   }
+
   function render() {
     //removing stage objects / Reset
     while (stage.hasChildNodes()) {
@@ -148,7 +203,7 @@
             break;
           case character.KEY:
             cell2.setAttribute("class", "cell key");
-            questNumber === 2 ||questNumber === 1 && mapNumber === 1 ?
+            questNumber === 2 || questNumber === 1 && mapNumber === 1 ?
               stage.appendChild(cell2)
               : cell.classList.add('floor'); break;
 
@@ -174,7 +229,7 @@
             break;
           case character.BONES:
             cell2.setAttribute("class", "cell bones");
-            questNumber === 1 && mapNumber === 0 || questNumber === 2 && mapNumber === 1?
+            questNumber === 1 && mapNumber === 0 || questNumber === 2 && mapNumber === 1 ?
               stage.appendChild(cell2) : cell.classList.add('floor'); break;
         }
         cell.style.top = row * SIZE + "px";
@@ -202,29 +257,29 @@
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY
         || heroMatrix[0][1] === character.BONES) {//validações criadas
-        if (heroMatrix[0][1] === character.KEY)trade("keys");
-        if (heroMatrix[0][1] === character.BONES)trade("bones");
+        if (heroMatrix[0][1] === character.KEY) trade("keys");
+        if (heroMatrix[0][1] === character.BONES) trade("bones");
 
         playerRow--;
       }
         break;
       case teclado.DOWN: if (heroMatrix[2][1] === character.FLOOR || heroMatrix[2][1] === character.KEY || heroMatrix[2][1] === character.BONES) {
-        if (heroMatrix[2][1] === character.KEY)trade("keys");
-        if (heroMatrix[2][1] === character.BONES)trade("bones");
+        if (heroMatrix[2][1] === character.KEY) trade("keys");
+        if (heroMatrix[2][1] === character.BONES) trade("bones");
         playerRow++;
       }
         break;
 
       case teclado.LEFT: if (heroMatrix[1][0] === character.FLOOR || heroMatrix[1][0] === character.KEY || heroMatrix[1][0] === character.BONES) {
-        if (heroMatrix[1][0] === character.KEY)trade("keys");
-        if (heroMatrix[1][0] === character.BONES)trade("bones");
+        if (heroMatrix[1][0] === character.KEY) trade("keys");
+        if (heroMatrix[1][0] === character.BONES) trade("bones");
         playerColumn--;
       }
         break;
 
       case teclado.RIGHT: if (heroMatrix[1][2] === character.FLOOR || heroMatrix[1][2] === character.KEY || heroMatrix[1][2] === character.BONES) {
-        if (heroMatrix[1][2] === character.KEY)trade("keys");
-        if (heroMatrix[1][2] === character.BONES)trade("bones");
+        if (heroMatrix[1][2] === character.KEY) trade("keys");
+        if (heroMatrix[1][2] === character.BONES) trade("bones");
         playerColumn++;
       }
         break;
@@ -312,9 +367,9 @@
         }
         //doorlock
         if (rowNumb === 7 && colNumb === 17
-          || rowNumb === 14 && colNumb === 7)mapArray[0][rowNumb][colNumb] = character.DOORLOCK;
+          || rowNumb === 14 && colNumb === 7) mapArray[0][rowNumb][colNumb] = character.DOORLOCK;
 
-        if (rowNumb === 3 && colNumb === 4 || rowNumb === 14 && colNumb === 7)mapArray[1][rowNumb][colNumb] = character.DOORLOCK;
+        if (rowNumb === 3 && colNumb === 4 || rowNumb === 14 && colNumb === 7) mapArray[1][rowNumb][colNumb] = character.DOORLOCK;
 
         //setting keys
         if (rowNumb === 15 && colNumb === 1 || rowNumb === 13 && colNumb === 1) {
@@ -332,11 +387,11 @@
           || rowNumb === 4 && colNumb === 16) {
           mapArray[0][rowNumb][colNumb] = character.ICESTONE;
           mapArray[1][rowNumb][colNumb] = character.ICESTONE;
-         
-          rowNumb === 11 ? mapArray[1][rowNumb][colNumb] = character.WALL : null; 
+
+          rowNumb === 11 ? mapArray[1][rowNumb][colNumb] = character.WALL : null;
         }
-        if (rowNumb === 14 && colNumb === 4 )
-        mapArray[1][rowNumb][colNumb] = character.ICESTONE;
+        if (rowNumb === 14 && colNumb === 4)
+          mapArray[1][rowNumb][colNumb] = character.ICESTONE;
         //Setting Enemys
         if (rowNumb === 13 && colNumb === 10
           || rowNumb === 6 && colNumb === 2) {
@@ -586,6 +641,7 @@
         keys = keys - 1;
       }
     }
+    questSound.play();
     mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
   }
 
@@ -606,8 +662,7 @@
       }
       mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     }
-
-
+    successSound.play();
   }
   function questPicker() {
     mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
@@ -625,7 +680,9 @@
     if (questNumber == 1)
       alert(" Check The map ! And get out of here! ");
     else
-      alert(" Now you can hundle it! ")
+      alert(" Now you can hundle it! ");
+
+    questSound.play();
   }
 
   function trade(character) {
@@ -636,9 +693,12 @@
       bones++;
     }
     console.log(keys);
+    scoreSound.play();
   }
 
   function fightEnemy() {
+
+    fightSound.play();
 
     let randomEnemyForce = Math.floor((Math.random() * 10) + 1);
     let randomPlayerForce = Math.floor((Math.random() * 10) + 1);
@@ -654,10 +714,10 @@
           for (let matrixCol = 0; matrixCol < enemyMatrix[0][0].length; matrixCol++) {
             enemyMatrix[enemy][matrixRow][matrixCol] != character.HERO ?
               null
-              :function(){
+              : function () {
                 enemyNumber = enemy;
-              } 
-              break;
+              }
+            break;
           }
         }
       }
@@ -689,16 +749,20 @@
       gameMessage += " you won this fight";
       render();
     }
+
   }
 
   function endGame() {
-  
+    deathSound.play();
+
     alert("you lose");
     window.removeEventListener("keydown", keydownHandler, false);
-  
+
   }
 
   function nextLevel() {
+    scoreSound.play();
+
     //next level
     if (heroMatrix[0][1] === character.STAIRS
       || heroMatrix[2][1] === character.STAIRS
@@ -717,6 +781,27 @@
     findGameObjects();
     render();
     //  window.removeEventListener("keydown", keydownHandler, false);
+  }
+  function createSilenceButton() {
+    //define silence button
+    silenceButton = document.createElement("BUTTON");
+    silenceButton.setAttribute("id", "silenceBtn");
+    silenceButton.innerHTML = "Silence";
+    silenceButton.setAttribute("style", "float: right;");
+    //append the button to the info panel
+    let infoPanel = document.getElementById("infoPanel");
+    infoPanel.appendChild(silenceButton);
+
+  }
+  function soundConfiguration() {
+    if (!silenceSound) {
+      silenceSound = true;
+      backgroundSound.play();
+    }
+    else {
+      silenceSound = false;
+      backgroundSound.pause();
+    }
   }
   function resetVariables() {
     questNumber = 0;
