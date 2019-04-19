@@ -79,6 +79,7 @@
   var scoreSound;
   var successSound;
   var questSound;
+
   var silenceButton;
   // function to load sounds
   function sound(src) {
@@ -106,6 +107,9 @@
     scoreSound = document.getElementById('score');
     successSound = document.getElementById('success');
     questSound = document.getElementById('quest');
+
+    silenceButton = document.getElementById("gameOptions");
+
   }
 
   window.addEventListener("load", init, false);
@@ -115,13 +119,14 @@
     stage = document.querySelector("#stage");
     output = document.querySelector("#infoPanel");
     firstTime = true;
-    stageWidth = document.getElementById('stage').clientWidth;
-    stageHeigth = document.getElementById('stage').clientHeight;
+    stageWidth = stage.clientWidth;
+    stageHeigth = stage.clientHeight;
 
     //initialize sounds
     soundsSRC.forEach(element => {
       sound(element);
     });
+
     forceInstance();
     backgroundSound.play();
     //  daw map array
@@ -132,8 +137,6 @@
     render();
 
     window.addEventListener("keydown", keydownHandler);
-
-    createSilenceButton();
 
     silenceButton.addEventListener("click", soundConfiguration);
   }
@@ -173,6 +176,7 @@
     while (stage.hasChildNodes()) {
       stage.removeChild(stage.firstChild);
     }
+    
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLUMNS; col++) {
         //var for the cell
@@ -183,6 +187,7 @@
         let cell2 = document.createElement("div");
 
         switch (mapArray[mapNumber][row][col]) {
+         
           case character.HERO:
             switch (event.keyCode) {
               case teclado.DOWN: cell2.setAttribute("class", "cell actor down animated walk ");
@@ -197,6 +202,7 @@
             }
             stage.appendChild(cell2);
             break;
+
           case character.QUESTION:
             cell2.setAttribute("class", "cell question animated blink");
             stage.appendChild(cell2);
@@ -252,7 +258,6 @@
     gameMessage += "\n Bones : " + bones;
   }
   function keydownHandler(event) {
-
     mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY
@@ -286,9 +291,6 @@
 
       case teclado.SPACE: {
         verify();
-        if (heroMatrix[0][1] === character.ENEMY || heroMatrix[1][0] === character.ENEMY
-          || heroMatrix[2][1] === character.ENEMY || heroMatrix[1][2] === character.ENEMY)
-          fightEnemy();
 
         if (heroMatrix[0][1] === character.QUESTION || heroMatrix[2][1] === character.QUESTION
           || heroMatrix[1][2] === character.QUESTION || heroMatrix[1][0] === character.QUESTION)
@@ -317,6 +319,8 @@
     heroMatrix = new Array(3).fill().map(item => (new Array(3).fill(0)));
     contructMaps();
     findGameObjects();
+
+    console.log(mapArray);
   }
 
   function contructMaps() {
@@ -449,7 +453,7 @@
   //function to move enemy if he got nerby spaces
   //AI function
   function autoMoveEnemy() {
-    let autoNumb = Math.floor(Math.random() * (5 - 0) + 0);
+    let autoNumb = Math.floor(Math.random() * (4 - 0) + 0);
 
     switch (autoNumb) {
       case 0: enemyColumn != null ? aiAutoEnemyOne() : null;
@@ -458,29 +462,27 @@
         break;
       case 2: enemy2Column != null && enemyColumn != null ? aiAutoEnemyThree() : null;
         break;
-      case 3: enemy2Column != null && enemyColumn != null ? aiAutoEnemyFour() : null;
-        break;
-      case 4: enemy2Column != null && enemyColumn != null ? defaultAiAutoLeft() : null;
+      case 3: enemy2Column != null && enemyColumn != null ? defaultAiAutoLeft() : null;
         break;
     }
-
+  checkEnemy();
   }
   function aiAutoEnemyOne() {
     mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
     //check left move
-    if (enemyMatrix[0][1][0] === character.FLOOR) {
+    if (enemyMatrix[0][1][0] === character.FLOOR ||enemyMatrix[0][1][0] === character.HERO) {
       enemyColumn--;
     }
     //check bot move
-    else if (enemyMatrix[0][2][1] === character.FLOOR) {
+    else if (enemyMatrix[0][2][1] === character.FLOOR ||enemyMatrix[0][2][1] === character.HERO) {
       enemyRow++;
     }
     //check right move
-    else if (enemyMatrix[0][1][2] === character.FLOOR) {
+    else if (enemyMatrix[0][1][2] === character.FLOOR ||enemyMatrix[0][1][2] === character.HERO ) {
       enemyColumn++;
     }
     //check top move
-    else if (enemyMatrix[0][0][1] === character.FLOOR) { /// improve both enemy moving 
+    else if (enemyMatrix[0][0][1] === character.FLOOR ||enemyMatrix[0][0][1] === character.HERO) { /// improve both enemy moving 
       enemyRow--;
     }
     mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
@@ -488,19 +490,19 @@
   function aiAutoEnemyTow() {
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
     //check  right move
-    if (enemyMatrix[1][1][2] === character.FLOOR) {
+    if (enemyMatrix[1][1][2] === character.FLOOR ||enemyMatrix[1][1][2] === character.HERO) {
       enemy2Column++;
     }
     //check top move
-    else if (enemyMatrix[1][0][1] === character.FLOOR) {
+    else if (enemyMatrix[1][0][1] === character.FLOOR ||enemyMatrix[1][0][1] === character.HERO) {
       enemy2Row--;
     }
     // check left move
-    else if (enemyMatrix[1][1][0] === character.FLOOR) {
+    else if (enemyMatrix[1][1][0] === character.FLOOR ||enemyMatrix[1][1][0] === character.HERO) {
       enemy2Column--;
     }
     //check bot move
-    else if (enemyMatrix[1][2][1] === character.FLOOR) {
+    else if (enemyMatrix[1][2][1] === character.FLOOR ||enemyMatrix[1][2][1] === character.HERO) {
       enemy2Row++;
     }
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
@@ -508,7 +510,8 @@
   function aiAutoEnemyThree() {
     mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
     //check  right move and top
-    if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR) {
+    if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR
+      ||enemyMatrix[0][1][2] === character.HERO || enemyMatrix[0][1][0] === character.HERO) {
       enemyColumn++;
     }
     //check left and top
@@ -520,35 +523,13 @@
     //enemy 2
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
     //check  right move and bot
-    if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR) {
+    if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR
+      ||enemyMatrix[1][1][2] === character.HERO || enemyMatrix[1][2][1] === character.HERO) {
       enemy2Column++;
     }
     //check left and top
     else if (enemyMatrix[1][1][0] === character.FLOOR && enemyMatrix[1][0][1] === character.FLOOR) {
       enemyMatrix[1][2][1] === character.FLOOR ? enemy2Row++ : enemy2Column--;
-    }
-    mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
-  }
-  function aiAutoEnemyFour() {
-    mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
-    //check  top
-    if (enemyMatrix[0][0][1] === character.FLOOR) {
-      enemyRow--;
-    }
-    //check  bot
-    else if (enemyMatrix[0][2][1] === character.FLOOR) {
-      enemyMatrix[0][1][0] === character.FLOOR ? enemyColumn-- : enemyRow++;
-    }
-    mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
-    mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
-    //check top 
-    if (enemyMatrix[1][0][1] === character.FLOOR) {
-      enemy2Row--;
-    }
-    //check bot
-    else if (enemyMatrix[1][2][1] === character.FLOOR) {
-      //check left
-      enemyMatrix[1][1][0] === character.FLOOR ? enemy2Column-- : enemy2Row++;
     }
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
   }
@@ -696,68 +677,20 @@
     scoreSound.play();
   }
 
-  function fightEnemy() {
-
+  function checkEnemy() {
     fightSound.play();
 
-    let randomEnemyForce = Math.floor((Math.random() * 10) + 1);
-    let randomPlayerForce = Math.floor((Math.random() * 10) + 1);
-
-    if (randomEnemyForce > randomPlayerForce) {
-      endGame();
-    }
-    else {
-      let enemyNumber;
-      for (let enemy = 0; enemy < enemyMatrix.length; enemy++) {
-
-        for (let matrixRow = 0; matrixRow < enemyMatrix[0].length; matrixRow++) {
-          for (let matrixCol = 0; matrixCol < enemyMatrix[0][0].length; matrixCol++) {
-            enemyMatrix[enemy][matrixRow][matrixCol] != character.HERO ?
-              null
-              : function () {
-                enemyNumber = enemy;
-              }
-            break;
-          }
-        }
-      }
-      console.log(`enemyNumber ${enemyNumber}`);
-      if (enemyNumber === 0) {
-        mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
-        enemyRow = null;
-        enemyColumn = null;
-      } else {
-        mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
-        enemy2Row = null;
-        enemy2Column = null;
-      }
-
-      switch (heroMatrix) {
-        case heroMatrix[0][1]:
-          playerRow--;
-          break;
-        case heroMatrix[2][1]:
-          playerRow++;
-          break;
-        case heroMatrix[1][0]:
-          playerColumn--;
-          break;
-        case heroMatrix[1][2]:
-          playerColumn++;
-          break;
-      }
-      gameMessage += " you won this fight";
-      render();
-    }
-
+    if(enemy2Column === playerColumn && enemy2Row === playerRow 
+      || enemyColumn === playerColumn &&  enemyRow === playerRow )
+    endGame();
+    
   }
-
   function endGame() {
     deathSound.play();
 
     alert("you lose");
     window.removeEventListener("keydown", keydownHandler, false);
-
+    resetVariables();
   }
 
   function nextLevel() {
@@ -782,18 +715,9 @@
     render();
     //  window.removeEventListener("keydown", keydownHandler, false);
   }
-  function createSilenceButton() {
-    //define silence button
-    silenceButton = document.createElement("BUTTON");
-    silenceButton.setAttribute("id", "silenceBtn");
-    silenceButton.innerHTML = "Silence";
-    silenceButton.setAttribute("style", "float: right;");
-    //append the button to the info panel
-    let infoPanel = document.getElementById("infoPanel");
-    infoPanel.appendChild(silenceButton);
 
-  }
   function soundConfiguration() {
+
     if (!silenceSound) {
       silenceSound = true;
       backgroundSound.play();

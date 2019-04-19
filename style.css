@@ -178,13 +178,26 @@ exemplo: para desfocar qualquer elemento basta addicionar a class blurred; os co
         -webkit-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
         -moz-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
         box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
-        border: thin whitesmoke solid;
+        border: 5px gold solid;
         /* comentar quando as imagens forem colocadas*/
         background-color: #555;
 
     
     }
     #infoPanel {
+        position: relative;
+        width: 598px;
+        height: 50px;
+        display: block;
+        margin: auto;
+        background-color: darkgrey;
+        -webkit-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
+        box-shadow: 10px 10px 9px 1px rgba(0, 0, 0, 0.75);
+        border: 5px gold solid;
+        border-radius: 5px;
+    }
+    #gameOptions {
         position: relative;
         width: 598px;
         height: 50px;
