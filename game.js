@@ -254,11 +254,15 @@
     }
 
     output.innerHTML = gameMessage;
+    gameMessageUpdate();
+  }
+  function gameMessageUpdate(){
     gameMessage = "Keys : " + keys;
-    gameMessage += "\n Bones : " + bones;
+    gameMessage += "<br> Bones : " + bones +"</br>";
   }
   function keydownHandler(event) {
     mapArray[mapNumber][playerRow][playerColumn] = character.FLOOR;
+    
     switch (event.keyCode) {
       case teclado.UP: if (heroMatrix[0][1] === character.FLOOR || heroMatrix[0][1] === character.KEY
         || heroMatrix[0][1] === character.BONES) {//validações criadas
@@ -658,11 +662,15 @@
 
     mapArray[mapNumber][playerRow][playerColumn] = character.HERO;
     questNumber++;
-    if (questNumber == 1)
-      alert(" Check The map ! And get out of here! ");
-    else
-      alert(" Now you can hundle it! ");
+    if (questNumber == 1){
+      gameMessage = "<br>"+ " Search for the keys " +"</br>";
+      alert(" Check The map !  Search for the keys! ");
+    }
 
+    else{
+      gameMessage = "<br>"+ " Open the door!! " +"</br>";
+      alert(" Now you can hundle it! ");
+    }
     questSound.play();
   }
 
@@ -678,14 +686,13 @@
   }
 
   function checkEnemy() {
-    fightSound.play();
-
-    if(enemy2Column === playerColumn && enemy2Row === playerRow 
+     if(enemy2Column === playerColumn && enemy2Row === playerRow 
       || enemyColumn === playerColumn &&  enemyRow === playerRow )
     endGame();
     
   }
   function endGame() {
+    fightSound.play();
     deathSound.play();
 
     alert("you lose");
