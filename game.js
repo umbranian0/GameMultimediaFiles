@@ -79,8 +79,11 @@
   var scoreSound;
   var successSound;
   var questSound;
+  
 
   var silenceButton;
+  var restButton;
+
   // function to load sounds
   function sound(src) {
     this.sound = document.createElement("audio");
@@ -108,7 +111,9 @@
     successSound = document.getElementById('success');
     questSound = document.getElementById('quest');
 
-    silenceButton = document.getElementById("gameOptions");
+    silenceButton = document.getElementById("btnSilence");
+    restButton = document.getElementById("btnRestart");
+
 
   }
 
@@ -139,6 +144,12 @@
     window.addEventListener("keydown", keydownHandler);
 
     silenceButton.addEventListener("click", soundConfiguration);
+    restButton.addEventListener("click", restartGame);
+  }
+  
+  function restartGame(){
+    init();
+    backgroundSound.pause();
   }
 
   //function that stores the map 
@@ -367,6 +378,7 @@
           mapArray[0][rowNumb][colNumb] = character.WALL;
           mapArray[1][rowNumb][colNumb] = character.WALL;
         }
+
         //setting stairsE
         if (rowNumb === 17 && colNumb === 6
           || rowNumb === 12 && colNumb === 13) {
@@ -392,7 +404,8 @@
         }
         //setting Ice
         if (rowNumb === 11 && colNumb === 4
-          || rowNumb === 4 && colNumb === 16) {
+          || rowNumb === 4 && colNumb === 16
+          || rowNumb === 9 && colNumb === 3) {
           mapArray[0][rowNumb][colNumb] = character.ICESTONE;
           mapArray[1][rowNumb][colNumb] = character.ICESTONE;
 
@@ -462,7 +475,7 @@
     switch (autoNumb) {
       case 0: enemyColumn != null ? aiAutoEnemyOne() : null;
         break;
-      case 1: enemy2Column != null ? aiAutoEnemyTow() : null;
+      case 1: enemy2Column != null ? aiAutoEnemyTwo() : null;
         break;
       case 2: enemy2Column != null && enemyColumn != null ? aiAutoEnemyThree() : null;
         break;
@@ -491,7 +504,7 @@
     }
     mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
   }
-  function aiAutoEnemyTow() {
+  function aiAutoEnemyTwo() {
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
     //check  right move
     if (enemyMatrix[1][1][2] === character.FLOOR ||enemyMatrix[1][1][2] === character.HERO) {
@@ -741,4 +754,7 @@
     enemy2Column = undefined;
     enemy2Row = undefined;
   }
+
+  
+
 })();

@@ -210,4 +210,30 @@ exemplo: para desfocar qualquer elemento basta addicionar a class blurred; os co
         border: 5px gold solid;
         border-radius: 5px;
     }
+    
+    #helpPanel{
+        float: right;
+        margin-top: -700px;
+        margin-right: 10px;
+        border: 5px gold solid;
+        border-radius: 5px;
+        width: 330px;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-weight: bold;
+        color: yellow;
+        -webkit-text-stroke-width: 0.5px;
+        -webkit-text-stroke-color: black;
+    }
+    
+    #helpTitle{
+        margin-left: 5px;
+        text-align: center;
+        
+    }
+    #icons{
+        color: white;
+        font-size: 12px;
+        margin-left: 5px;
+        padding-bottom: 10px;
+    }
 }
