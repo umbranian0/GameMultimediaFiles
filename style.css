@@ -83,7 +83,17 @@ body {
 .actor.left {
     transform: rotate(-90deg);
 }
+.enemy.down {
+    transform: rotate(180deg);
+}
 
+.enemy.right {
+    transform: rotate(90deg);
+}
+
+.enemy.left {
+    transform: rotate(-90deg);
+}
 
 /*
 ---- Animação -----------------------------------------
