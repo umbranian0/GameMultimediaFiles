@@ -225,9 +225,27 @@
               : cell.classList.add('floor'); break;
 
           case character.ENEMY:
-            cell2.setAttribute("class", "cell enemy animated walk");
+
+          let enemyMove;
+          if (row === enemyRow && col === enemyColumn)enemyMove = lastMovingPositionEnemy1;
+          else if (row === enemy2Row && col === enemy2Column)enemyMove = lastMovingPositionEnemy2;
+          switch (enemyMove) {
+            case "down":
+            cell2.setAttribute("class", "cell enemy down animated walk ");
+            break;
+            case "left":
+            cell2.setAttribute("class", "cell enemy left animated walk ");
+            break;
+            case "right":
+            cell2.setAttribute("class", "cell enemy right animated walk ");
+            break;
+            default :
+            cell2.setAttribute("class", "cell enemy animated walk ");
+            break;
+          }
             stage.appendChild(cell2);
             break;
+            
           case character.FLOOR: cell.classList.add('floor'); break;
           case character.WALL: cell.classList.add('wall'); break;
           case character.STAIRE:
@@ -468,10 +486,13 @@
     }
   }
   //function to move enemy if he got nerby spaces
+  //var to store the LastMovingPosition of enemy
+  var lastMovingPositionEnemy1;
+  var lastMovingPositionEnemy2;
   //AI function
   function autoMoveEnemy() {
     let autoNumb = Math.floor(Math.random() * (4 - 0) + 0);
-
+    checkEnemy();
     switch (autoNumb) {
       case 0: enemyColumn != null ? aiAutoEnemyOne() : null;
         break;
@@ -482,25 +503,29 @@
       case 3: enemy2Column != null && enemyColumn != null ? defaultAiAutoLeft() : null;
         break;
     }
-  checkEnemy();
+
   }
   function aiAutoEnemyOne() {
     mapArray[mapNumber][enemyRow][enemyColumn] = character.FLOOR;
     //check left move
     if (enemyMatrix[0][1][0] === character.FLOOR ||enemyMatrix[0][1][0] === character.HERO) {
       enemyColumn--;
+      lastMovingPositionEnemy1 = "left";
     }
     //check bot move
     else if (enemyMatrix[0][2][1] === character.FLOOR ||enemyMatrix[0][2][1] === character.HERO) {
       enemyRow++;
+      lastMovingPositionEnemy1 = "down";
     }
     //check right move
     else if (enemyMatrix[0][1][2] === character.FLOOR ||enemyMatrix[0][1][2] === character.HERO ) {
+      lastMovingPositionEnemy1 = "right";
       enemyColumn++;
     }
     //check top move
     else if (enemyMatrix[0][0][1] === character.FLOOR ||enemyMatrix[0][0][1] === character.HERO) { /// improve both enemy moving 
       enemyRow--;
+      lastMovingPositionEnemy1 = "top";
     }
     mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
   }
@@ -509,18 +534,22 @@
     //check  right move
     if (enemyMatrix[1][1][2] === character.FLOOR ||enemyMatrix[1][1][2] === character.HERO) {
       enemy2Column++;
+      lastMovingPositionEnemy2 = "right";
     }
     //check top move
     else if (enemyMatrix[1][0][1] === character.FLOOR ||enemyMatrix[1][0][1] === character.HERO) {
       enemy2Row--;
+      lastMovingPositionEnemy2 = "top";
     }
     // check left move
     else if (enemyMatrix[1][1][0] === character.FLOOR ||enemyMatrix[1][1][0] === character.HERO) {
       enemy2Column--;
+      lastMovingPositionEnemy2 = "left";
     }
     //check bot move
     else if (enemyMatrix[1][2][1] === character.FLOOR ||enemyMatrix[1][2][1] === character.HERO) {
       enemy2Row++;
+      lastMovingPositionEnemy2 = "down";
     }
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
   }
@@ -530,10 +559,12 @@
     if (enemyMatrix[0][1][2] === character.FLOOR && enemyMatrix[0][1][0] === character.FLOOR
       ||enemyMatrix[0][1][2] === character.HERO || enemyMatrix[0][1][0] === character.HERO) {
       enemyColumn++;
+      lastMovingPositionEnemy1 = "right";
     }
     //check left and top
     else if (enemyMatrix[0][1][0] === character.FLOOR && enemyMatrix[0][0][1] === character.FLOOR) {
       enemyMatrix[0][2][1] === character.FLOOR ? enemyRow++ : enemyColumn--;
+      enemyMatrix[0][2][1] === character.FLOOR ? lastMovingPositionEnemy1 = "down":  lastMovingPositionEnemy1 = "left";
     }
     mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
 
@@ -543,10 +574,12 @@
     if (enemyMatrix[1][1][2] === character.FLOOR && enemyMatrix[1][2][1] === character.FLOOR
       ||enemyMatrix[1][1][2] === character.HERO || enemyMatrix[1][2][1] === character.HERO) {
       enemy2Column++;
+      lastMovingPositionEnemy2 = "right";
     }
     //check left and top
     else if (enemyMatrix[1][1][0] === character.FLOOR && enemyMatrix[1][0][1] === character.FLOOR) {
       enemyMatrix[1][2][1] === character.FLOOR ? enemy2Row++ : enemy2Column--;
+      enemyMatrix[1][2][1] === character.FLOOR ? lastMovingPositionEnemy2 = "down" : lastMovingPositionEnemy2 = "left";;
     }
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
   }
@@ -556,10 +589,12 @@
     if (enemyMatrix[0][0][1] != character.FLOOR && enemyMatrix[0][1][2] != character.FLOOR
       && enemyMatrix[0][2][1] != character.FLOOR) {
       enemyColumn--;
+      lastMovingPositionEnemy1 = "left";
     }
     else if (enemyMatrix[0][1][0] != character.FLOOR && enemyMatrix[0][0][1] != character.FLOOR
       && enemyMatrix[0][2][1] != character.FLOOR) {
       enemyColumn++;
+      lastMovingPositionEnemy1 = "right";
     }
     mapArray[mapNumber][enemyRow][enemyColumn] = character.ENEMY;
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.FLOOR;
@@ -567,10 +602,12 @@
     if (enemyMatrix[1][0][1] != character.FLOOR && enemyMatrix[1][1][2] != character.FLOOR
       && enemyMatrix[1][2][1] != character.FLOOR) {
       enemy2Column--;
+      lastMovingPositionEnemy2 = "left";
     }
     else if (enemyMatrix[1][1][0] != character.FLOOR && enemyMatrix[1][0][1] != character.FLOOR
       && enemyMatrix[1][2][1] != character.FLOOR) {
       enemy2Column++;
+      lastMovingPositionEnemy2 = "right";
     }
     mapArray[mapNumber][enemy2Row][enemy2Column] = character.ENEMY;
   }
